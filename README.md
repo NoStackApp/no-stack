@@ -1,4 +1,4 @@
-# no-stack
+# @nostack/no-stack
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
@@ -60,42 +60,10 @@ npm install apollo-fetch apollo-link-context apollo-link-http axios formik \
   uuid --save
 ```
 
-### Install `no-stack` via NPM
+### Install `no-stack` via NPM/Yarn
 
 ```bash
-npm install no-stack --save
-```
-
-### Install `no-stack` via Github
-
-If you want the latest features of `no-stack`, you would need to install it
-directly from Github via SSH.
-
-Add dependencies entry in the app's `package.json` file:
-
-```json
-"dependencies": {
-  ...
-  "no-stack": "git+https://git@github.com/NoStackApp/no-stack.git"
-}
-```
-
-The on the command line, run:
-
-```bash
-npm install
-```
-
-#### Installing a Specific Version from GitHub
-
-You may opt to install a particular version of `no-stack` by adding the version
-tag at the end of its dependencies entry in `package.json`:
-
-```json
-"dependencies": {
-  ...
-  "no-stack": "git+https://git@github.com/NoStackApp/no-stack.git#v0.0.12"
-}
+npm install @nostack/no-stack --save
 ```
 
 ### Initial Set-Up
@@ -139,7 +107,7 @@ import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
-import { createAuthLink, httpLink } from 'no-stack';
+import { createAuthLink, httpLink } from '@nostack/no-stack';
 
 const PLATFORM_ID = 'your-platform-id';
 
@@ -180,7 +148,7 @@ it in our previous `src/index.js` file like so:
 ```javascript
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { NoStackProvider } from 'no-stack';
+import { NoStackProvider } from '@nostack/no-stack';
 
 import './index.css';
 
@@ -219,7 +187,7 @@ login & logout. Sample usage:
 
 ```javascript
 import React from 'react';
-import { LoginForm, LogoutButton } from 'no-stack';
+import { LoginForm, LogoutButton } from '@nostack/no-stack';
 
 const SomeComponent = () => (
   <NoStackConsumer>
@@ -270,7 +238,7 @@ You may interchage `<NoStackConsumer>` with `withNoStack` HOC and achieve the
 same effect:
 
 ```javascript
-import { withNoStack } from 'no-stack';
+import { withNoStack } from '@nostack/no-stack';
 
 const SomeComponent = ({ currentUser, loading, login, logout }) => {
   if (loading) return 'Loading...';
@@ -306,7 +274,7 @@ near the root of your application so that the button is accessible in all your p
 Sample usage:
 
 ```javascript
-import { Console, NoStackProvider } from 'no-stack';
+import { Console, NoStackProvider } from '@nostack/no-stack';
 
 import RootComponent from './RootComponent';
 
@@ -336,7 +304,7 @@ Following is an example usage.
 
 ```javascript
 import React from 'react';
-import { Source } from 'no-stack';
+import { Source } from '@nostack/no-stack';
 import gql from 'graphql-tag';
 
 const SOURCE_QUERY = gql`
@@ -644,7 +612,7 @@ a mutation helper you can plug into Apollo's `<Mutation>` component called `EXEC
 
 ```javascript
 import { Mutation } from '@apollo/react-components';
-import { EXECUTE_ACTION } from 'no-stack';
+import { EXECUTE_ACTION } from '@nostack/no-stack';
 
 const YourComponent = () => (
   <Mutation mutation={EXECUTE_ACTION} >
@@ -675,7 +643,7 @@ Or, via Apollo's `graphql` HOC:
 
 ```javascript
 import { graphql } from '@apollo/react-hoc';
-import { EXECUTE_ACTION } from 'no-stack';
+import { EXECUTE_ACTION } from '@nostack/no-stack';
 
 const YourComponent = ({ executeAction }) => (
   <div>
