@@ -1,0 +1,11 @@
+src/assets
+*.scss
+*.css
+*.graphql
+*.gql
+*.snap
+*.svg
+*.jpg
+*.gif
+src/serviceWorker.js
+src/generated

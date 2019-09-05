@@ -1,0 +1,29 @@
+language: node_js
+
+cache:
+  yarn: true
+  directories:
+    - ~/.npm
+
+node_js:
+  - 10
+
+jobs:
+  include:
+    - stage: test
+      node_js:
+        - lts/*
+      script:
+        - yarn lint
+        - yarn test
+    - stage: release
+      node_js: lts/*
+      script:
+        - yarn build
+      deploy:
+        provider: script
+        skip_cleanup: true
+        on:
+          all_branches: true
+        script:
+          - yarn release

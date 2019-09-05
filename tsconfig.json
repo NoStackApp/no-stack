@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "typeRoots": ["node_modules/@types", "src/@types"],
+    "declarationMap": true,
+    "removeComments": true,
+    "lib": ["esnext", "dom"],
+    "strict": true,
+    "target": "es5",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["*"]
+    }
+  },
+  "files": ["src/@types/graphql.d.ts"],
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

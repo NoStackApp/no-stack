@@ -1,0 +1,83 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb",
+    "prettier",
+    "prettier/react",
+    "prettier/@typescript-eslint",
+    "plugin:jest/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings"
+  ],
+  "plugins": [
+    "react",
+    "import",
+    "prettier",
+    "jest",
+    "react-hooks"
+  ],
+  "rules": {
+    "comma-dangle": "off",
+    "react/no-typos": "off",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-pascal-case": 2,
+    "react/forbid-prop-types": 0,
+    "react/no-unused-prop-types": 1,
+    "react/prefer-stateless-function": 1,
+    "react/prop-types": [2, { "skipUndeclared": true }],
+    "prettier/prettier": "error",
+    "no-nested-ternary": "off",
+    "react/no-array-index-key": "off",
+    "no-unused-vars": [ "error", { "argsIgnorePattern": "^_$" } ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/prefer-default-export": "off",
+    "react": {
+      "version": "detect"
+    }
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {},
+      "node": {
+        "paths": [ "src" ]
+      }
+    },
+    "flowtype": {
+      "onlyFilesWithFlowAnnotation": true
+    }
+  },
+  "overrides": [
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest/globals": true
+      },
+      "rules": {
+        "import/no-extraneous-dependencies": "off"
+      }
+    },
+    {
+      "files": ["*.stories.js", "*.stories.jsx"],
+      "rules": {
+        "import/no-extraneous-dependencies": "off",
+        "no-console": "off"
+      }
+    }
+  ]
+}
