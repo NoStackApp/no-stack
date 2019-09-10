@@ -725,6 +725,9 @@ it is meant to be used for updating the cache after an action that updates an in
 
 For sample usage, see [`<Project>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/Project/index.js#L57).
 
-#### `updateSourceAfterDeleteAction(instanceId, fragment)`
+#### `updateSourceAfterDeleteAction(instanceId)`
 
-(_To be implemented_)
+`updateSourceAfterDeleteAction` is similar to `updateSourceAfterDeleteAction`, but
+it is meant to be used for updating the cache after an action that deletes an instance.
+
+For sample usage, see [`<Project>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/Project/index.js#L75).
