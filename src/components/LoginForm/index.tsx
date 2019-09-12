@@ -25,6 +25,7 @@ const Row = styled.div`
   input {
     display: block;
     margin: 0.5em auto;
+    width: 80%;
   }
 `;
 
