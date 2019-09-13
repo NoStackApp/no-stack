@@ -69,6 +69,7 @@
     "@apollo/react-components": "^3.0.1",
     "@apollo/react-hoc": "^3.0.1",
     "@apollo/react-hooks": "^3.0.1",
+    "@apollo/react-testing": "^3.1.0",
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
