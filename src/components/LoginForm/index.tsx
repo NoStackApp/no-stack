@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { withNoStack } from '../NoStackContext';
 
 const Wrapper = styled.div`
-  max-width: 300px;
-  min-width: 200px;
+  width: 250px;
 
   padding: 1em 0;
 
@@ -24,7 +23,9 @@ const Row = styled.div`
   text-align: center;
 
   input {
-    margin: 0 0.5em;
+    display: block;
+    margin: 0.5em auto;
+    width: 80%;
   }
 `;
 
