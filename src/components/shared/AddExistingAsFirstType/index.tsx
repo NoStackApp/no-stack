@@ -7,7 +7,7 @@ import gql from 'graphql-tag';
 
 import { TextButton } from 'components/ui';
 
-import { TYPES_NOT_IN_TREE_QUERY } from 'components/Source/AddExistingTypePanel/queries';
+import { TYPES_NOT_IN_TREE_QUERY } from 'components/Unit/AddExistingTypePanel/queries';
 import { withNoStack } from 'components/NoStackContext';
 
 import Dropdown from '../Dropdown';

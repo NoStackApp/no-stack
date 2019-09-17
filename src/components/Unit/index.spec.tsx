@@ -4,12 +4,12 @@ import { MockedProvider } from '@apollo/react-testing';
 import gql from 'graphql-tag';
 import faker from 'faker';
 
-import Source from '.';
+import Unit from '.';
 
 const TEST_QUERY = gql`
-  query SOURCE($id: ID!, $typeRelationships: String!, $parameters: String) {
-    sourceData(
-      sourceId: $id
+  query Unit($id: ID!, $typeRelationships: String!, $parameters: String) {
+    unitData(
+      unitId: $id
       typeRelationships: $typeRelationships
       parameters: $parameters
     ) {
@@ -55,7 +55,7 @@ const testData = [
   },
 ];
 
-describe('Source component', () => {
+describe('Unit component', () => {
   const mocks = [
     {
       request: {
@@ -64,7 +64,7 @@ describe('Source component', () => {
       },
       result: {
         data: {
-          sourceData: testData,
+          unitData: testData,
         },
       },
     },
@@ -73,7 +73,7 @@ describe('Source component', () => {
   const renderTestComponent = () =>
     render(
       <MockedProvider mocks={mocks} addTypename={false}>
-        <Source
+        <Unit
           id={testVariables.id}
           query={TEST_QUERY}
           typeRelationships={testTypeRelationships}
@@ -91,7 +91,7 @@ describe('Source component', () => {
 
             return (
               <div>
-                {data.sourceData.map(({ instance }) => (
+                {data.unitData.map(({ instance }) => (
                   <div key={instance.id}>
                     {instance.id} {instance.value}
                   </div>
@@ -99,7 +99,7 @@ describe('Source component', () => {
               </div>
             );
           }}
-        </Source>
+        </Unit>
       </MockedProvider>,
     );
 
