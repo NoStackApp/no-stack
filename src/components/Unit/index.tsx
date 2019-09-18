@@ -67,16 +67,16 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
           value: data.value,
           __typename: 'Instance',
         },
-        __typename: 'InstanceWithChildren',
+        __typename: 'InstanceWithTypedChildren',
       };
     }
 
-    const { sourceData } = cache.readQuery({
+    const { unitData } = cache.readQuery({
       query,
       variables: {
         ...queryVariables,
       },
-    }) as { sourceData: Instance[] };
+    }) as { unitData: Instance[] };
 
     cache.writeQuery({
       query,
@@ -84,7 +84,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
         ...queryVariables,
       },
       data: {
-        sourceData: [newInstance, ...sourceData],
+        unitData: [newInstance, ...unitData],
       },
     });
   };
@@ -109,12 +109,12 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
   const updateUnitAfterDeleteAction = (
     instanceId: string,
   ): MutationUpdaterFn<Response> => (cache): void => {
-    const { sourceData } = cache.readQuery({
+    const { unitData } = cache.readQuery({
       query,
       variables: {
         ...queryVariables,
       },
-    }) as { sourceData: Instance[] };
+    }) as { unitData: Instance[] };
 
     cache.writeQuery({
       query,
@@ -122,7 +122,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
         ...queryVariables,
       },
       data: {
-        sourceData: sourceData.filter(
+        unitData: unitData.filter(
           ({ instance }): boolean => instance.id !== instanceId,
         ),
       },
