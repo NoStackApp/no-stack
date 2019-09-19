@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "module": "ESNext",
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react",

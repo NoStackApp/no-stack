@@ -8,9 +8,9 @@ import gql from 'graphql-tag';
 import CreateFirstType from 'components/shared/CreateFirstType';
 import { IdText, TextButton } from 'components/ui';
 
-import { SOURCE_QUERY } from 'components/Source/queries';
-import SourceTypeTree from 'components/Source/SourceTypeTree';
-import SourceControlPanel from 'components/Source/SourceControlPanel';
+import { SOURCE_QUERY } from 'components/Unit/queries';
+import SourceTypeTree from 'components/Unit/SourceTypeTree';
+import SourceControlPanel from 'components/Unit/SourceControlPanel';
 
 const Wrapper = styled.div`
   margin-bottom: 0.8em;

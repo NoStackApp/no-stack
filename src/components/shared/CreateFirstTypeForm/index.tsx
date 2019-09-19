@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import { v4 } from 'uuid';
 
 import { TextButton } from 'components/ui';
-import { TREE_FRAGMENT } from 'components/Source/fragments';
+import { TREE_FRAGMENT } from 'components/Unit/fragments';
 
 const CREATE_FIRST_TYPE_MUTATION = gql`
   mutation CREATE_FIRST_TYPE($id: ID!, $name: String!, $treeId: ID!) {

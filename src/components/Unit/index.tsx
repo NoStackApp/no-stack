@@ -7,7 +7,7 @@ import { DocumentNode } from 'graphql';
 import { NoStackConsumer } from '../NoStackContext';
 import SourceInfoButton from './SourceInfoButton';
 
-export interface SourceInterface {
+export interface UnitInterface {
   id: string;
   query: DocumentNode;
   typeRelationships: object;
@@ -29,7 +29,7 @@ export interface Response {
   ExecuteAction: string;
 }
 
-export const Source: React.FunctionComponent<SourceInterface> = ({
+export const Unit: React.FunctionComponent<UnitInterface> = ({
   id,
   query,
   typeRelationships,
@@ -51,7 +51,7 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
     },
   ];
 
-  const updateSourceAfterCreateAction = (
+  const updateUnitAfterCreateAction = (
     instance: Instance,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
     let newInstance: Instance;
@@ -67,16 +67,16 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
           value: data.value,
           __typename: 'Instance',
         },
-        __typename: 'InstanceWithChildren',
+        __typename: 'InstanceWithTypedChildren',
       };
     }
 
-    const { sourceData } = cache.readQuery({
+    const { unitData } = cache.readQuery({
       query,
       variables: {
         ...queryVariables,
       },
-    }) as { sourceData: Instance[] };
+    }) as { unitData: Instance[] };
 
     cache.writeQuery({
       query,
@@ -84,12 +84,12 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
         ...queryVariables,
       },
       data: {
-        sourceData: [newInstance, ...sourceData],
+        unitData: [newInstance, ...unitData],
       },
     });
   };
 
-  const updateSourceAfterUpdateAction = (
+  const updateUnitAfterUpdateAction = (
     instanceId: string,
     fragment: DocumentNode,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
@@ -106,15 +106,15 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
     });
   };
 
-  const updateSourceAfterDeleteAction = (
+  const updateUnitAfterDeleteAction = (
     instanceId: string,
   ): MutationUpdaterFn<Response> => (cache): void => {
-    const { sourceData } = cache.readQuery({
+    const { unitData } = cache.readQuery({
       query,
       variables: {
         ...queryVariables,
       },
-    }) as { sourceData: Instance[] };
+    }) as { unitData: Instance[] };
 
     cache.writeQuery({
       query,
@@ -122,7 +122,7 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
         ...queryVariables,
       },
       data: {
-        sourceData: sourceData.filter(
+        unitData: unitData.filter(
           ({ instance }): boolean => instance.id !== instanceId,
         ),
       },
@@ -148,9 +148,9 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
                 loading,
                 queryVariables,
                 refetchQueries,
-                updateSourceAfterCreateAction,
-                updateSourceAfterUpdateAction,
-                updateSourceAfterDeleteAction,
+                updateUnitAfterCreateAction,
+                updateUnitAfterUpdateAction,
+                updateUnitAfterDeleteAction,
               });
             }}
           </Query>
@@ -160,4 +160,4 @@ export const Source: React.FunctionComponent<SourceInterface> = ({
   );
 };
 
-export default Source;
+export default Unit;
