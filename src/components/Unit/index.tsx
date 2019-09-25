@@ -17,6 +17,7 @@ export interface UnitInterface {
 }
 
 export interface Instance {
+  id: string;
   instance: {
     id: string;
     value: string;
@@ -62,10 +63,11 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
       const data = response.data && JSON.parse(response.data.ExecuteAction);
 
       newInstance = {
+        id: data.instanceId,
         instance: {
           id: data.instanceId,
           value: data.value,
-          __typename: 'Instance',
+          __typename: 'InstanceWithTypedChildren',
         },
         __typename: 'InstanceWithTypedChildren',
       };
