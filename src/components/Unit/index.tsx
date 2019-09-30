@@ -67,7 +67,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
         instance: {
           id: data.instanceId,
           value: data.value,
-          __typename: 'InstanceWithTypedChildren',
+          __typename: 'Instance',
         },
         __typename: 'InstanceWithTypedChildren',
       };
@@ -91,14 +91,14 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     });
   };
 
-  const updateUnitAfterUpdateAction = (
+  const updateUnitInstanceAfterUpdateAction = (
     instanceId: string,
     fragment: DocumentNode,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
     const data = response.data && JSON.parse(response.data.ExecuteAction);
 
     cache.writeFragment({
-      id: instanceId,
+      id: `${instanceId}Instance`,
       fragment,
       data: {
         id: instanceId,
@@ -151,7 +151,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
                 queryVariables,
                 refetchQueries,
                 updateUnitAfterCreateAction,
-                updateUnitAfterUpdateAction,
+                updateUnitInstanceAfterUpdateAction,
                 updateUnitAfterDeleteAction,
               });
             }}
