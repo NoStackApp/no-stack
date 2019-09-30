@@ -105,6 +105,7 @@ Then edit `src/client/index.js`:
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { v4 } from 'uuid';
 
 import { createAuthLink, httpLink } from '@nostack/no-stack';
 
@@ -117,7 +118,8 @@ const link = ApolloLink.from([authLink, httpLink]);
 export default new ApolloClient({
   link,
   cache: new InMemoryCache({
-    dataIdFromObject: object => object.id,
+    dataIdFromObject: object =>
+      object.id ? object.id + object.__typename : v4(),
   }),
 });
 ```
@@ -591,8 +593,9 @@ Anything less will be missing data, and anything more will not return anything.
   mutation's own `refetchQueries`property (see mutation discussion below).
 - `updateUnitAfterCreateAction(instance)` - a higher-order function function for
   updating Apollo cache after creating an instance (see mutation discussion below).
-- `updateUnitAfterUpdateAction(instanceId, fragment)` - a higher-order function
-  for updating Apollo cache after updating an instance (see mutation discussion below).
+- `updateUnitInstanceAfterUpdateAction(instanceId, fragment)` - a higher-order function
+  for updating an instance in Apollo cache after updating an instance (see mutation
+  discussion below).
 - `updateUnitAfterDeleteAction(instanceId)` - a higher-order function for updating
   Apollo cache after deleting an instance (see mutation discussion below).
 
@@ -722,10 +725,11 @@ the `onAdd` prop.
 
 A slightly more complicated usage is found in [`<CreateTodoForm>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/CreateTodoForm/index.js#L79).
 
-#### `updateUnitAfterUpdateAction(instanceId, fragment)`
+#### `updateUnitInstanceAfterUpdateAction(instanceId, fragment)`
 
-`updateUnitAfterUpdateAction` is similar to `updateUnitAfterCreateAction`, but
-it is meant to be used for updating the cache after an action that updates an instance.
+`updateUnitInstanceAfterUpdateAction` is similar to `updateUnitAfterCreateAction`,
+but it is meant to be used for updating a given instance in the cache after an
+action that updates it on the backend.
 
 For sample usage, see [`<Project>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/Project/index.js#L57).
 
