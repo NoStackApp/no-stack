@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, createRef } from 'react';
 import styled from 'styled-components';
 import { Query } from '@apollo/react-components';
 
@@ -34,54 +33,84 @@ const Content = styled.div`
   border: 1px #eeeeee solid;
 `;
 
-class Modal extends Component {
-  constructor(props) {
-    super(props);
+export interface ModalProps {
+  onHide: () => void;
+  platformId: string;
+}
 
-    this.wrapperRef = React.createRef();
-  }
+export interface Action {
+  id: string;
+  name: string;
+  actionType: string;
+}
 
-  state = {};
+export interface UserClass {
+  id: string;
+  name: string;
+  actions: Action[];
+}
 
-  componentDidMount() {
+export interface Platform {
+  id: string;
+  name: string;
+  classes: UserClass[];
+}
+
+export interface QueryData {
+  Platform: Platform[];
+}
+
+export interface QueryVariables {
+  id: string;
+}
+
+class Modal extends Component<ModalProps, {}> {
+  private wrapperRef = createRef<HTMLDivElement>();
+
+  public componentDidMount(): void {
     document.addEventListener('mousedown', this.handleClickOutside);
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount(): void {
     document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
-  handleClickOutside = event => {
+  public handleClickOutside = (event: Event): void => {
     const { onHide } = this.props;
 
-    if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
+    const node = this.wrapperRef.current;
+
+    if (node && !node.contains(event.target as Node)) {
       onHide();
     }
   };
 
-  render() {
+  public render(): JSX.Element {
     const { onHide, platformId } = this.props;
 
     return (
       <ConsoleWrapper>
         <Container ref={this.wrapperRef}>
-          <CloseButton type="button" onClick={() => onHide()}>
-            X
+          <CloseButton type="button" onClick={(): void => onHide()}>
+            &times;
           </CloseButton>
           <h1>no-stack console</h1>
           <Content>
-            <Query query={PLATFORM_QUERY} variables={{ id: platformId }}>
-              {({ loading, error, data }) => {
+            <Query<QueryData, QueryVariables>
+              query={PLATFORM_QUERY}
+              variables={{ id: platformId }}
+            >
+              {({ loading, error, data }): JSX.Element => {
                 if (loading) {
-                  return 'Loading...';
+                  return <>Loading...</>;
                 }
 
                 if (error) {
-                  return 'Something went wrong.';
+                  return <>Something went wrong.</>;
                 }
 
                 if (!data || !data.Platform) {
-                  return 'Failed to retrieve platform data.';
+                  return <>Failed to retrieve platform data.</>;
                 }
 
                 return <ViewSwitcher platformData={data.Platform[0]} />;
@@ -93,14 +122,5 @@ class Modal extends Component {
     );
   }
 }
-
-Modal.propTypes = {
-  onHide: PropTypes.func,
-  platformId: PropTypes.string.isRequired,
-};
-
-Modal.defaultProps = {
-  onHide: () => {},
-};
 
 export default Modal;

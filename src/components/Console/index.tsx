@@ -82,7 +82,10 @@ export class Console extends Component<ConsoleProps, ConsoleState> {
           }
 
           return (
-            <Modal platformId={platformId} onHide={this.handleHideConsole} />
+            <Modal
+              platformId={platformId as string}
+              onHide={this.handleHideConsole}
+            />
           );
         }}
       </NoStackConsumer>
