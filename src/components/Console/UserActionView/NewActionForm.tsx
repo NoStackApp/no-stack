@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FunctionComponent } from 'react';
 import { Form, Field, ErrorMessage } from 'formik';
 import { v4 } from 'uuid';
 import styled from 'styled-components';
@@ -37,8 +36,18 @@ const ErrorWrapper = styled.div`
   color: red;
 `;
 
+export interface NewActionFormProps {
+  errors?: string[];
+  isSubmitting: boolean;
+  onCancel: () => void;
+}
+
 /* eslint-disable jsx-a11y/label-has-for, jsx-a11y/label-has-associated-control */
-const NewActionForm = ({ errors, isSubmitting, onCancel }) => (
+const NewActionForm: FunctionComponent<NewActionFormProps> = ({
+  errors = [],
+  isSubmitting,
+  onCancel,
+}): JSX.Element => (
   <Form>
     <h2>New Action</h2>
     <FieldWrapper>
@@ -49,7 +58,9 @@ const NewActionForm = ({ errors, isSubmitting, onCancel }) => (
           name="actionName"
           placeholder="name"
           disabled={isSubmitting}
-          validate={value => !value && 'Name required.'}
+          validate={(value: string): string | boolean =>
+            !value && 'Name required.'
+          }
         />
       </label>
     </FieldWrapper>
@@ -65,15 +76,19 @@ const NewActionForm = ({ errors, isSubmitting, onCancel }) => (
           id="type"
           name="type"
           component="select"
-          validate={value => !value && 'Please select an Action Type.'}
+          validate={(value: string): string | boolean =>
+            !value && 'Please select an Action Type.'
+          }
           disabled={isSubmitting}
         >
           <option />
-          {ACTION_TYPES.map(actionType => (
-            <option key={actionType} value={actionType}>
-              {actionType}
-            </option>
-          ))}
+          {ACTION_TYPES.map(
+            (actionType: string): JSX.Element => (
+              <option key={actionType} value={actionType}>
+                {actionType}
+              </option>
+            ),
+          )}
         </Field>
       </label>
     </FieldWrapper>
@@ -103,7 +118,11 @@ const NewActionForm = ({ errors, isSubmitting, onCancel }) => (
 
     {errors &&
       errors.length > 0 &&
-      errors.map(error => <ErrorWrapper key={v4()}>{error}</ErrorWrapper>)}
+      errors.map(
+        (error: string): JSX.Element => (
+          <ErrorWrapper key={v4()}>{error}</ErrorWrapper>
+        ),
+      )}
 
     <FieldWrapper>
       <button type="submit" disabled={isSubmitting}>
@@ -115,15 +134,5 @@ const NewActionForm = ({ errors, isSubmitting, onCancel }) => (
     </FieldWrapper>
   </Form>
 );
-
-NewActionForm.propTypes = {
-  errors: PropTypes.arrayOf(PropTypes.string),
-  onCancel: PropTypes.func.isRequired,
-  isSubmitting: PropTypes.bool.isRequired,
-};
-
-NewActionForm.defaultProps = {
-  errors: [],
-};
 
 export default NewActionForm;
