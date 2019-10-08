@@ -62,6 +62,7 @@ export class Console extends Component<ConsoleProps, ConsoleState> {
       <NoStackConsumer>
         {({ currentUser, platformId }): JSX.Element | null => {
           if (
+            !platformId ||
             !currentUser ||
             !currentUser.role ||
             currentUser.role !== 'MODERATOR'

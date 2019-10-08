@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Formik } from 'formik';
 import { graphql } from '@apollo/react-hoc';
+import { MutationFunction } from '@apollo/react-common';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 
@@ -30,12 +30,40 @@ const CREATE_ACTION_MUTATION = gql`
 
 const Wrapper = styled.div``;
 
-class UserActionView extends Component {
-  state = {
+export interface Action {
+  id: string;
+  name: string;
+  actionType: string;
+}
+
+export interface UserClassFragment {
+  id: string;
+  name: string;
+  actions: Action[];
+}
+
+export interface UserActionViewProps {
+  userClassId: string;
+  createAction: MutationFunction;
+  returnToIndex: () => void;
+}
+
+export interface UserActionViewState {
+  errors: string[];
+}
+
+class UserActionView extends Component<
+  UserActionViewProps,
+  UserActionViewState
+> {
+  public readonly state = {
     errors: [],
   };
 
-  handleSubmit = async (values, { setSubmitting }) => {
+  public handleSubmit = async (
+    values: { actionName: string; type: string; params: string },
+    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void },
+  ): Promise<void> => {
     const { userClassId, createAction, returnToIndex } = this.props;
     const { actionName, type, params } = values;
 
@@ -51,14 +79,14 @@ class UserActionView extends Component {
           actionType: type,
           actionParameters: JSON.stringify(JSON.parse(params)),
         },
-        update: (cache, { data: { newAction } }) => {
+        update: (cache, { data: { newAction } }): void => {
           const fragmentName = 'UserClassParts';
 
           const userClass = cache.readFragment({
             id: userClassId,
             fragment: USER_CLASS_FRAGMENT,
             fragmentName,
-          });
+          }) as UserClassFragment;
 
           userClass.actions = userClass.actions.concat(newAction);
 
@@ -108,7 +136,7 @@ class UserActionView extends Component {
     returnToIndex();
   };
 
-  render() {
+  public render(): JSX.Element {
     const { returnToIndex } = this.props;
     const { errors } = this.state;
 
@@ -121,7 +149,7 @@ class UserActionView extends Component {
             params: '',
           }}
           onSubmit={this.handleSubmit}
-          render={props => (
+          render={(props: { isSubmitting: boolean }): JSX.Element => (
             <NewActionForm
               {...props}
               errors={errors}
@@ -134,12 +162,18 @@ class UserActionView extends Component {
   }
 }
 
-UserActionView.propTypes = {
-  returnToIndex: PropTypes.func.isRequired,
-  userClassId: PropTypes.string.isRequired,
-  createAction: PropTypes.func.isRequired,
-};
+export interface Response {
+  newAction: Action;
+}
 
-export default graphql(CREATE_ACTION_MUTATION, { name: 'createAction' })(
-  UserActionView,
-);
+export interface Variables {
+  name: string;
+  userClassId: string;
+  actionType: string;
+  actionParameters: string;
+}
+
+export default graphql<{}, Response, Variables, UserActionViewProps>(
+  CREATE_ACTION_MUTATION,
+  { name: 'createAction' },
+)(UserActionView);
