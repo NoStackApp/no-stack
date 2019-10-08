@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { IdText } from 'components/ui';
@@ -9,18 +8,33 @@ const Wrapper = styled.div`
   margin-bottom: 0.8em;
 `;
 
-class Action extends Component {
-  state = {
+export interface ActionInterface {
+  id: string;
+  name: string;
+  actionType: string;
+}
+
+export interface ActionProps {
+  action: ActionInterface;
+  userClassId: string;
+}
+
+export interface ActionState {
+  showMenu: boolean;
+}
+
+class Action extends Component<ActionProps, ActionState> {
+  public readonly state = {
     showMenu: false,
   };
 
-  handleMouseEnter = () => this.setState({ showMenu: true });
+  public handleMouseEnter = (): void => this.setState({ showMenu: true });
 
-  handleMouseLeave = () => this.setState({ showMenu: false });
+  public handleMouseLeave = (): void => this.setState({ showMenu: false });
 
-  handleDelete = () => {};
+  public handleDelete = (): void => {};
 
-  render() {
+  public render(): JSX.Element {
     const { action, userClassId } = this.props;
     const { showMenu } = this.state;
 
@@ -42,14 +56,5 @@ class Action extends Component {
     );
   }
 }
-
-Action.propTypes = {
-  action: PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string,
-    actionType: PropTypes.string,
-  }).isRequired,
-  userClassId: PropTypes.string.isRequired,
-};
 
 export default Action;
