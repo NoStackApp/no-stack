@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, SyntheticEvent } from 'react';
 import { v4 } from 'uuid';
 import { graphql } from '@apollo/react-hoc';
+import { MutationFunction } from '@apollo/react-common';
 import gql from 'graphql-tag';
 
 import { TextButton, IdText } from 'components/ui';
@@ -9,6 +9,7 @@ import { TextButton, IdText } from 'components/ui';
 import UserClass from './UserClass';
 import AddUserClassForm from './AddUserClassForm';
 import { COLLECTION_FRAGMENT } from '../fragments';
+import { View } from '../ViewSwitcher';
 
 import { PLATFORM_QUERY } from '../Modal/platform-query';
 
@@ -49,46 +50,77 @@ const ADD_USER_CLASS_MUTATION = gql`
   ${COLLECTION_FRAGMENT}
 `;
 
-class UserClassView extends Component {
-  state = {
+interface Action {
+  id: string;
+  name: string;
+}
+
+interface UserClass {
+  id: string;
+  name: string;
+  actions: Action[];
+}
+
+interface UserClassViewProps {
+  platformData: {
+    id: string;
+    name: string;
+    classes: UserClass[];
+  };
+  changeView: (view: View, props: { userClassId: string }) => void;
+  views: {
+    USER_SOURCE_VIEW: View;
+    USER_ACTION_VIEW: View;
+  };
+  addUserClass: MutationFunction;
+}
+
+interface UserClassViewState {
+  isFormVisible: boolean;
+  newUserClassName: string;
+  isSubmitting: boolean;
+}
+
+class UserClassView extends Component<UserClassViewProps, UserClassViewState> {
+  public readonly state = {
     isFormVisible: false,
     newUserClassName: '',
     isSubmitting: false,
   };
 
-  showActionView = userClassId => {
+  public showActionView = (userClassId: string): void => {
     const { changeView, views } = this.props;
 
     changeView(views.USER_ACTION_VIEW, { userClassId });
   };
 
-  showSourceView = userClassId => {
+  public showSourceView = (userClassId: string): void => {
     const { changeView, views } = this.props;
 
     changeView(views.USER_SOURCE_VIEW, { userClassId });
   };
 
-  showForm = () =>
+  public showForm = (): void =>
     this.setState({
       isFormVisible: true,
       newUserClassName: '',
     });
 
-  hideForm = () =>
+  public hideForm = (): void =>
     this.setState({
       isFormVisible: false,
       isSubmitting: false,
     });
 
-  handleFormChange = e => {
+  public handleFormChange = (e: SyntheticEvent): void => {
     e.preventDefault();
 
     this.setState({
-      newUserClassName: e.target.value,
+      newUserClassName: (e.target as HTMLInputElement).value,
     });
   };
 
-  handleCreateUserClass = async () => {
+  public handleCreateUserClass = async (): Promise<void> => {
     const { platformData, addUserClass } = this.props;
     const { newUserClassName } = this.state;
 
@@ -108,11 +140,11 @@ class UserClassView extends Component {
         collectionId,
         collectionName,
       },
-      update: (cache, { data: { newUser } }) => {
+      update: (cache, { data: { newUser } }): void => {
         const { Platform } = cache.readQuery({
           query: PLATFORM_QUERY,
           variables: { id: platformData.id },
-        });
+        }) as { Platform: { classes: UserClass[] }[] };
 
         Platform[0].classes.push(newUser);
 
@@ -129,7 +161,7 @@ class UserClassView extends Component {
     this.hideForm();
   };
 
-  render() {
+  public render(): JSX.Element {
     const { platformData } = this.props;
     const { newUserClassName, isFormVisible, isSubmitting } = this.state;
 
@@ -159,36 +191,61 @@ class UserClassView extends Component {
             )}
 
         <ul>
-          {platformData.classes.map(userClass => (
-            <li key={userClass.id}>
-              <UserClass
-                userClass={userClass}
-                platformId={platformData.id}
-                showActionView={this.showActionView}
-                showSourceView={this.showSourceView}
-              />
-            </li>
-          ))}
+          {platformData.classes.map(
+            (userClass): JSX.Element => (
+              <li key={userClass.id}>
+                <UserClass
+                  userClass={userClass}
+                  platformId={platformData.id}
+                  showActionView={this.showActionView}
+                  showSourceView={this.showSourceView}
+                />
+              </li>
+            ),
+          )}
         </ul>
       </div>
     );
   }
 }
 
-UserClassView.propTypes = {
-  platformData: PropTypes.shape({
-    id: PropTypes.string,
-    name: PropTypes.string,
-    classes: PropTypes.array,
-  }).isRequired,
-  changeView: PropTypes.func.isRequired,
-  views: PropTypes.shape({
-    USER_ACTION_VIEW: PropTypes.string,
-    USER_SOURCE_VIEW: PropTypes.string,
-  }).isRequired,
-  addUserClass: PropTypes.func.isRequired,
-};
+interface Source {
+  id: string;
+  name: string;
+}
 
-export default graphql(ADD_USER_CLASS_MUTATION, { name: 'addUserClass' })(
-  UserClassView,
-);
+interface Collection {
+  id: string;
+  name: string;
+  sources: Source[];
+}
+
+interface Response {
+  newUser: UserClass;
+  AddCollection: Collection;
+  AddUserClassCollection: {
+    id: string;
+    name: string;
+    collection: Collection[];
+  };
+}
+
+interface Variables {
+  id: string;
+  name: string;
+  platformId: string;
+  collectionId: string;
+  collectionName: string;
+}
+
+export default graphql<
+  {
+    changeView: (view: View, props: { userClassId: string }) => void;
+    goBack?: () => void;
+    returnToIndex?: () => void;
+    views: object;
+  },
+  Response,
+  Variables,
+  UserClassViewProps
+>(ADD_USER_CLASS_MUTATION, { name: 'addUserClass' })(UserClassView);
