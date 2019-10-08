@@ -183,7 +183,7 @@ class UserClass extends Component {
             </h5>
             <ul>
               {userClass.actions.map(action => (
-                <li>
+                <li key={action.id}>
                   <Action
                     key={action.id}
                     userClassId={userClass.id}
