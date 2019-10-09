@@ -17,6 +17,8 @@ export interface ActionInterface {
 export interface ActionProps {
   action: ActionInterface;
   userClassId: string;
+  platformId: string;
+  updateUserClass: () => void;
 }
 
 export interface ActionState {
@@ -35,7 +37,7 @@ class Action extends Component<ActionProps, ActionState> {
   public handleDelete = (): void => {};
 
   public render(): JSX.Element {
-    const { action, userClassId } = this.props;
+    const { action, userClassId, platformId, updateUserClass } = this.props;
     const { showMenu } = this.state;
 
     return (
@@ -46,7 +48,12 @@ class Action extends Component<ActionProps, ActionState> {
         <div>
           {action.name}
           {showMenu && (
-            <DeleteUserActionButton action={action} userClassId={userClassId} />
+            <DeleteUserActionButton
+              action={action}
+              userClassId={userClassId}
+              platformId={platformId}
+              updateUserClass={updateUserClass}
+            />
           )}
         </div>
         <div>

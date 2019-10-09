@@ -47,6 +47,8 @@ class UserClass extends Component {
 
   handleMouseLeave = () => this.setState({ showMenu: false });
 
+  updateUserClass = () => this.forceUpdate();
+
   toggleActions = () =>
     this.setState(prevState => ({
       showActions: !prevState.showActions,
@@ -185,9 +187,10 @@ class UserClass extends Component {
               {userClass.actions.map(action => (
                 <li key={action.id}>
                   <Action
-                    key={action.id}
                     userClassId={userClass.id}
+                    platformId={platformId}
                     action={action}
+                    updateUserClass={this.updateUserClass}
                   />
                 </li>
               ))}
