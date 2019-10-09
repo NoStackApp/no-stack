@@ -81,9 +81,10 @@ class UserActionView extends Component<
         },
         update: (cache, { data: { newAction } }): void => {
           const fragmentName = 'UserClassParts';
+          const fragmentId = `${userClassId}UserClass`;
 
           const userClass = cache.readFragment({
-            id: userClassId,
+            id: fragmentId,
             fragment: USER_CLASS_FRAGMENT,
             fragmentName,
           }) as UserClassFragment;
@@ -91,7 +92,7 @@ class UserActionView extends Component<
           userClass.actions = userClass.actions.concat(newAction);
 
           cache.writeFragment({
-            id: userClassId,
+            id: fragmentId,
             fragment: USER_CLASS_FRAGMENT,
             fragmentName,
             data: {
