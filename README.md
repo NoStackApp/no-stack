@@ -131,11 +131,14 @@ Apollo's cache, `dataIdFromObject` must be set up like we did above, which we
 repeat here:
 
 ```javascript
+import { v4 } from 'uuid';
+
 const client = new ApolloClient({
   // ...other options...
   cache: new InMemoryCache({
     // ... other options ...
-    dataIdFromObject: object => object.id,
+    dataIdFromObject: object =>
+      object.id ? object.id + object.__typename : v4(),
   }),
 });
 ```
