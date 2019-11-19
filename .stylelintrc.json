@@ -1,0 +1,18 @@
+{
+  "processors": ["stylelint-processor-styled-components"],
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-prettier",
+    "stylelint-config-styled-components"
+  ],
+  "rules": {
+    "declaration-empty-line-before": null,
+    "no-missing-end-of-source-newline": null,
+    "property-no-unknown": [
+      true,
+      {
+        "ignoreProperties": ["should-forward-prop"]
+      }
+    ]
+  }
+}

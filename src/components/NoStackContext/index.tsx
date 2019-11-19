@@ -142,16 +142,12 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
         executionParameters,
         unrestricted: true,
       },
-    }).catch(
-      (
-        err: ApolloError,
-      ): {
-        error: ApolloError;
-        data?: Response;
-      } => {
-        return { error: err };
-      },
-    );
+    }).catch((err: ApolloError): {
+      error: ApolloError;
+      data?: Response;
+    } => {
+      return { error: err };
+    });
 
     if (res.error || !res.data || !res.data.ExecuteAction) {
       if (res.error.networkError) {
@@ -215,16 +211,12 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
         executionParameters,
         unrestricted: true,
       },
-    }).catch(
-      (
-        err: ApolloError,
-      ): {
-        error: ApolloError;
-        data?: Response;
-      } => {
-        return { error: err };
-      },
-    );
+    }).catch((err: ApolloError): {
+      error: ApolloError;
+      data?: Response;
+    } => {
+      return { error: err };
+    });
 
     if (res.error || !res.data || !res.data.ExecuteAction) {
       return this.logout();
@@ -265,16 +257,12 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
         executionParameters,
         unrestricted: true,
       },
-    }).catch(
-      (
-        err: ApolloError,
-      ): {
-        error: ApolloError;
-        data?: Response;
-      } => {
-        return { error: err };
-      },
-    );
+    }).catch((err: ApolloError): {
+      error: ApolloError;
+      data?: Response;
+    } => {
+      return { error: err };
+    });
 
     if (res.error || !res.data || !res.data.ExecuteAction) {
       throw new Error('Expired/Invalid Token');
