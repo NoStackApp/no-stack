@@ -176,9 +176,7 @@ class NewTypeForm extends Component {
 
           {this.renderInput(
             'assn-name',
-            `What do you want to call the relationship between this new type and ${
-              parentType.name
-            }?`,
+            `What do you want to call the relationship between this new type and ${parentType.name}?`,
             'assnName',
             assnName,
           )}
