@@ -22,9 +22,11 @@
     "prettier/@typescript-eslint",
     "plugin:jest/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "plugin:json/recommended",
+    "plugin:prettier/recommended"
   ],
-  "plugins": ["react", "import", "prettier", "jest", "react-hooks"],
+  "plugins": ["react", "import", "prettier", "jest", "react-hooks", "json"],
   "rules": {
     "comma-dangle": "off",
     "react/no-typos": "off",
