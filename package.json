@@ -63,7 +63,8 @@
     "react-graph-vis": "^1.0.0",
     "react-spinkit": "^3.0.0",
     "styled-components": "^4.2.0",
-    "uuid": "^3.3.0"
+    "uuid": "^3.3.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@apollo/react-common": "^3.1.1",
@@ -96,6 +97,7 @@
     "@types/react-dom": "^16.8.5",
     "@types/styled-components": "^4.1.18",
     "@types/uuid": "^3.4.5",
+    "@types/yup": "^0.26.24",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "apollo-cache-inmemory": "^1.6.3",
@@ -155,7 +157,8 @@
     "ts-jest": "^24.0.2",
     "ts-transform-graphql-tag": "^0.2.1",
     "typescript": "^3.5.3",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "yup": "^0.27.0"
   },
   "config": {
     "commitizen": {
