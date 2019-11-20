@@ -78,6 +78,7 @@ class ConstraintPanel extends Component {
             <select
               id="constraint-type"
               onChange={this.handleConstraintTypeSelect}
+              onBlur={this.handleConstraintTypeSelect}
             >
               <option value="ID">ID</option>
               <option value="VALUE">VALUE</option>

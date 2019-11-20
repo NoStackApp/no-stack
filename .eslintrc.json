@@ -24,9 +24,18 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:json/recommended",
+    "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["react", "import", "prettier", "jest", "react-hooks", "json"],
+  "plugins": [
+    "react",
+    "import",
+    "prettier",
+    "jest",
+    "react-hooks",
+    "json",
+    "jsx-a11y"
+  ],
   "rules": {
     "comma-dangle": "off",
     "react/no-typos": "off",
@@ -45,7 +54,16 @@
     "import/prefer-default-export": "off",
     "react": {
       "version": "detect"
-    }
+    },
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        "labelComponents": ["Label"],
+        "labelAttributes": ["label"],
+        "controlComponents": ["Field"],
+        "depth": 3
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
