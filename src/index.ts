@@ -8,6 +8,8 @@ export * from './components/LoginForm';
 
 export * from './components/LogoutButton';
 
+export * from './components/RegistrationForm';
+
 export * from './mutations';
 
 export * from './apollo-links';
