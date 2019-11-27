@@ -98,20 +98,16 @@ export const DELETE_INSTANCE = gql`
 
 export const REGISTER_USER = gql`
   mutation REGISTER_USER(
-    $id: ID!
-    $platformId: ID!
-    $userClass: ID!
-    $username: String!
+    $userClassId: ID!
+    $name: String!
     $firstName: String!
     $lastName: String!
     $email: String!
     $password: String!
   ) {
     user: CreateUserOnPlatform(
-      id: $id
-      platformId: $platformId
-      userClass: $userClass
-      name: $username
+      userClass: $userClassId
+      name: $name
       firstName: $firstName
       lastName: $lastName
       email: $email
