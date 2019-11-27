@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, ErrorMessage } from 'formik';
-import { Row, FieldError } from './RegistrationForm.style';
+import { Row, ErrorContainer } from './RegistrationForm.style';
 
 interface RegistrationFieldProps {
   fieldLabel: string;
@@ -18,9 +18,9 @@ const RegistrationField: React.SFC<RegistrationFieldProps> = ({
       {fieldLabel}
       <Field type={type} name={name} />
     </label>
-    <FieldError>
+    <ErrorContainer>
       <ErrorMessage name={name} />
-    </FieldError>
+    </ErrorContainer>
   </Row>
 );
 

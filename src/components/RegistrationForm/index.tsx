@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form } from 'formik';
 import { useMutation } from '@apollo/react-hooks';
 import * as Yup from 'yup';
@@ -6,12 +6,13 @@ import * as Yup from 'yup';
 import { REGISTER_USER } from 'mutations';
 
 import RegistrationField from './RegistrationField';
-import { Wrapper, Row } from './RegistrationForm.style';
+import { Wrapper, Row, ErrorContainer } from './RegistrationForm.style';
 
 interface RegistrationFormProps {
   platformId: string;
   userClassId: string;
   submitButtonText: string;
+  onSuccess?: (data?: object) => void;
 }
 
 interface RegistrationFormValues {
@@ -63,13 +64,18 @@ const validationSchema = Yup.object().shape({
 export const RegistrationForm: React.SFC<RegistrationFormProps> = ({
   submitButtonText = 'Sign Up!',
   userClassId,
+  onSuccess,
 }): JSX.Element => {
   const [register] = useMutation(REGISTER_USER);
+  const [registrationCompleted, setRegistrationCompleted] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = async (
     values: RegistrationFormValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void },
   ): Promise<void> => {
+    setFormError('');
+
     if (values.password !== values.passwordConfirmation) {
       return;
     }
@@ -85,12 +91,28 @@ export const RegistrationForm: React.SFC<RegistrationFormProps> = ({
           password: values.password,
         },
       });
+
+      setRegistrationCompleted(true);
+
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.log(error.graphQLErrors);
+
+      setFormError('Something went wrong. Please try again.');
     }
 
     setSubmitting(false);
   };
+
+  if (registrationCompleted) {
+    return (
+      <Wrapper>
+        <p>Successfully created account! You can now log in.</p>
+      </Wrapper>
+    );
+  }
 
   return (
     <Wrapper>
@@ -130,6 +152,7 @@ export const RegistrationForm: React.SFC<RegistrationFormProps> = ({
               >
                 {submitButtonText}
               </button>
+              {formError && <ErrorContainer>{formError}</ErrorContainer>}
             </Row>
           </Form>
         )}

@@ -260,6 +260,28 @@ export default withNoStack(SomeComponent);
 `withNoStack` also provides the same props that `<NoStackConsumer>`'s FAAC provides.
 Feel free to use either, whatever suits your preference or situation.
 
+### User Registration
+
+`no-stack` provides a `<RegistrationForm>` component for your app's user registration:
+
+```javascript
+import { PLATFORM_ID, TYPE_USER_ID } from './config';
+
+export default SomeComponent = () => (
+  <div>
+    <RegistrationForm platformId={PLATFORM_ID} userClassId={TYPE_USER_ID} />
+  </div>
+);
+```
+
+#### `<RegistrationForm>` Props
+
+- `plantformId` - The current platform's ID
+
+- `userClassId` - The user class ID of the user to be created
+
+- `onSuccess(data)` - Callback function that will be invoked upon successful registration
+
 ### Platform Management Console
 
 After setting up authentication, the second thing you might want to implement

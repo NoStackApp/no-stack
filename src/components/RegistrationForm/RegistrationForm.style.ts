@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
   box-shadow: 10px 10px 8px -1px rgba(0, 0, 0, 0.6);
 `;
 
-export const FieldError = styled.div`
+export const ErrorContainer = styled.div`
   font-size: 0.75rem;
   color: tomato;
 `;
