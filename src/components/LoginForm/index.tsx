@@ -10,10 +10,6 @@ const Wrapper = styled.div`
 
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 10px 10px 10px 10px;
-  -moz-border-radius: 10px 10px 10px 10px;
-  -webkit-border-radius: 10px 10px 10px 10px;
-  -webkit-box-shadow: 10px 10px 8px -1px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 10px 10px 8px -1px rgba(0, 0, 0, 0.6);
   box-shadow: 10px 10px 8px -1px rgba(0, 0, 0, 0.6);
 `;
 
@@ -84,7 +80,12 @@ class RawLoginForm extends Component<FormProps, FormState> {
     } catch (error) {
       this.setState({
         isSubmitting: false,
-        error: error.message || error.graphQLErrors,
+        error:
+          error.message ||
+          (error.graphQLErrors &&
+            error.graphQLErrors.length &&
+            error.graphQLErrors[0]) ||
+          error,
       });
     }
   };
