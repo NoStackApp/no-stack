@@ -39,7 +39,7 @@ interface FormState {
   error: string;
 }
 
-class RawLoginForm extends Component<FormProps, FormState> {
+export class RawLoginForm extends Component<FormProps, FormState> {
   public static defaultProps = {
     currentUser: null,
     submitButtonText: 'Log In',

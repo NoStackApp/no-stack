@@ -4,7 +4,7 @@ export { Unit } from './components/Unit';
 
 export * from './components/Console';
 
-export * from './components/LoginForm';
+export { LoginForm } from './components/LoginForm';
 
 export * from './components/LogoutButton';
 
