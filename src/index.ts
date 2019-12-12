@@ -6,7 +6,7 @@ export * from './components/Console';
 
 export { LoginForm } from './components/LoginForm';
 
-export * from './components/LogoutButton';
+export { LogoutButton } from './components/LogoutButton';
 
 export * from './components/RegistrationForm';
 
