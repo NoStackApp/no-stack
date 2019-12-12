@@ -8,7 +8,7 @@ export { LoginForm } from './components/LoginForm';
 
 export { LogoutButton } from './components/LogoutButton';
 
-export * from './components/RegistrationForm';
+export { RegistrationForm } from './components/RegistrationForm';
 
 export * from './mutations';
 
