@@ -243,7 +243,8 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
   public async loginWithToken(): Promise<User | void> {
     const { loginUser, platformId } = this.props;
 
-    const accessToken = await localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('accessToken');
+
     if (!accessToken) {
       return this.logout();
     }
