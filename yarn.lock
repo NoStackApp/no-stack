@@ -10380,6 +10380,11 @@ mkdirp@0.5.1, mkdirp@0.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp
   dependencies:
     minimist "0.0.8"
 
+mock-apollo-client@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/mock-apollo-client/-/mock-apollo-client-0.2.0.tgz#8d9c99247d4f16cb5553479473c63dbce8a856fa"
+  integrity sha512-Sfrvzn3yBGqGZeIazp0N5lLSXvQL0MUaUFb60hVfMYIapLqZJH04Ll0TnX7lA4uRUz7mq+g0fpBzztZ/khS9LA==
+
 modify-values@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.1.tgz#b3939fa605546474e3e3e3c63d64bd43b4ee6022"
