@@ -103,7 +103,7 @@ describe('Unit component', () => {
       </MockedProvider>,
     );
 
-  it('should render properly', async () => {
+  it('should render data properly', async () => {
     const { getByText } = renderTestComponent();
 
     expect(getByText(/loading/i)).toBeTruthy();
