@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import SourceTypeTree from '../SourceTypeTree';
+import { Source } from '../types';
 
 const Wrapper = styled.div`
   position: relative;
@@ -26,15 +26,20 @@ const ContentRow = styled.div`
   background-color: #e6e0e0;
 `;
 
-const SourceInfoTree = ({ source }) =>
-  source && (
+interface SourceInfoTreeInterface {
+  unit: Source;
+}
+
+const SourceInfoTree: React.FunctionComponent<SourceInfoTreeInterface> = ({
+  unit,
+  children,
+}): JSX.Element =>
+  unit && (
     <Wrapper>
       <SourceDiv>
-        <div>Source: {source.name || 'Unnamed Source'}</div>
-        <div>Source ID: {source.id}</div>
-        <ContentRow>
-          <SourceTypeTree source={source} />
-        </ContentRow>
+        <div>Unit: {unit.name || 'Unnamed Source'}</div>
+        <div>Unit ID: {unit.id}</div>
+        <ContentRow>{children}</ContentRow>
       </SourceDiv>
     </Wrapper>
   );

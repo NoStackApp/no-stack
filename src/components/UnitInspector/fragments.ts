@@ -41,9 +41,5 @@ export const TREE_FRAGMENT = gql`
       id
       name
     }
-    root {
-      id
-      name
-    }
   }
 `;

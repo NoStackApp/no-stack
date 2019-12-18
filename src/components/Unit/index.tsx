@@ -5,7 +5,7 @@ import { MutationUpdaterFn } from 'apollo-client';
 import { DocumentNode } from 'graphql';
 
 import { NoStackConsumer } from '../NoStackContext';
-import SourceInfoButton from './SourceInfoButton';
+import UnitInspector from '../UnitInspector';
 
 export interface UnitInterface {
   id: string;
@@ -135,9 +135,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     <NoStackConsumer>
       {({ currentUser }): JSX.Element => (
         <div>
-          {currentUser &&
-            currentUser.role &&
-            currentUser.role === 'MODERATOR' && <SourceInfoButton id={id} />}
+          <UnitInspector id={id} currentUser={currentUser} />
           <Query<{}, {}> query={query} variables={queryVariables}>
             {({ loading, error, data }): JSX.Element => {
               if (loading) return children({ loading, error, data });
