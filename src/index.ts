@@ -6,8 +6,6 @@ export {
 
 export { Unit } from './components/Unit';
 
-export * from './components/Console';
-
 export { LoginForm } from './components/LoginForm';
 
 export { LogoutButton } from './components/LogoutButton';

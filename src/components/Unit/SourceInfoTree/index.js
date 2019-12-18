@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import SourceTypeTree from '../SourceTypeTree';
-import SourceControlPanel from '../SourceControlPanel';
 
 const Wrapper = styled.div`
   position: relative;
@@ -36,7 +35,6 @@ const SourceInfoTree = ({ source }) =>
         <ContentRow>
           <SourceTypeTree source={source} />
         </ContentRow>
-        <SourceControlPanel source={source} ContentRow={ContentRow} />
       </SourceDiv>
     </Wrapper>
   );

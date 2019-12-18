@@ -282,39 +282,6 @@ export default SomeComponent = () => (
 
 - `onSuccess(data)` - Callback function that will be invoked upon successful registration
 
-### Platform Management Console
-
-After setting up authentication, the second thing you might want to implement
-is the `<Console>`.
-
-The `<Console>` component is provided for the sole purpose of managing your
-current platform (i.e. adding, editing, and deleting user classes). When a
-moderator is logged in, It displays a transparent button on the lower left
-(or lower right) corner of the page you insert it into. When that button
-is clicked, a modal showing your dashboard will pop up.
-
-You may place it anywhere on your app, as long as it's a child or further
-down the hierarchy of a `<NoStackProvider>`. We do suggest that you place it
-near the root of your application so that the button is accessible in all your pages.
-
-Sample usage:
-
-```javascript
-import { Console, NoStackProvider } from '@nostack/no-stack';
-
-import RootComponent from './RootComponent';
-
-export default const App = () => (
-  <NoStackProvider>
-    <Console position="left" />
-    <RootComponent />
-  </NoStackProvider>
-);
-```
-
-`position` prop - Displays your console either on the bottom `left` or
-bottom `right` of the current page (default: `left`)
-
 ### Data Retrieval via the `<Unit>` Component (Experimental)
 
 `no-stack` provides a `<Unit>` component for retrieving data.
