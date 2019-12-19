@@ -9,7 +9,6 @@ import RegistrationField from './RegistrationField';
 import { Wrapper, Row, ErrorContainer } from './RegistrationForm.style';
 
 interface RegistrationFormProps {
-  platformId: string;
   userClassId: string;
   submitButtonText: string;
   onSuccess?: (data?: object) => void;
@@ -98,6 +97,7 @@ export const RegistrationForm: React.SFC<RegistrationFormProps> = ({
         onSuccess();
       }
     } catch (error) {
+      console.log(error);
       console.log(error.graphQLErrors);
 
       setFormError('Something went wrong. Please try again.');
