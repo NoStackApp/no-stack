@@ -33,11 +33,11 @@ async function refreshToken(platformId: string): Promise<string | null> {
       },
     });
 
-    if (!res.data || !res.data.ExecuteAction) {
+    if (!res.data || !res.data.data || !res.data.data.ExecuteAction) {
       return null;
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.data.ExecuteAction);
 
     if (
       !response.id ||
@@ -54,6 +54,8 @@ async function refreshToken(platformId: string): Promise<string | null> {
 
     return response.AuthenticationResult.AccessToken;
   } catch (e) {
+    console.log(e);
+
     return null;
   }
 }
@@ -83,6 +85,7 @@ export const createAuthLink = (platformId: string): ApolloLink =>
 
       if (isExpired) {
         token = await refreshToken(platformId);
+
         if (!token) {
           localStorage.clear();
 
