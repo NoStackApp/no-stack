@@ -118,3 +118,25 @@ export const REGISTER_USER = gql`
     }
   }
 `;
+
+export const FORGOT_PASSWORD = gql`
+  mutation FORGOT_PASSWORD($userNameOrEmail: String!, $stackId: ID!) {
+    ForgotPassword(userNameOrEmail: $userNameOrEmail, stackId: $stackId)
+  }
+`;
+
+export const RESET_PASSWORD = gql`
+  mutation RESET_PASSWORD(
+    $userNameOrEmail: String!
+    $password: String!
+    $code: String!
+    $stackId: ID!
+  ) {
+    ResetForgottenPassword(
+      userNameOrEmail: $userNameOrEmail
+      password: $password
+      code: $code
+      stackId: $stackId
+    )
+  }
+`;
