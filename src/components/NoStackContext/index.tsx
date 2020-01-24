@@ -88,6 +88,8 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
     if (user) {
       this.setUser(user.id, user.username, user.role, user.accessToken);
+    } else {
+      this.logout();
     }
 
     this.setState({
