@@ -77,14 +77,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
   };
 
   public async componentDidMount(): Promise<void> {
-    let user;
-    try {
-      user = await this.loginWithToken();
-    } catch (e) {
-      await this.refreshToken();
-
-      user = await this.loginWithToken();
-    }
+    const user = await this.retrieveUserWithToken();
 
     if (user) {
       this.setUser(user.id, user.username, user.role, user.accessToken);
@@ -196,6 +189,32 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     return response;
   };
 
+  private async retrieveUserWithToken(): Promise<User | void> {
+    let user;
+
+    try {
+      user = await this.loginWithToken();
+    } catch (e) {
+      user = await this.retrieveUserWithRefreshedToken();
+    }
+
+    return user;
+  }
+
+  private async retrieveUserWithRefreshedToken(): Promise<User | void> {
+    let user;
+
+    try {
+      await this.refreshToken();
+
+      user = await this.loginWithToken();
+    } catch (e) {
+      console.log('Invalid token.');
+    }
+
+    return user;
+  }
+
   public async refreshToken(): Promise<string | void> {
     const { loginUser: refreshAccessToken, platformId } = this.props;
 
@@ -255,7 +274,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
     const res = await loginUser({
       variables: {
-        // VERIFY TOKEN ACTION
+        // VERIFY TOKEN/RETRIEVE USER ACTION
         actionId: '1279e113-d70f-4a95-9890-a5cebd344f3d',
         executionParameters,
         unrestricted: true,
