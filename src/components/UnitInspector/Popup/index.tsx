@@ -39,8 +39,6 @@ const Popup: React.FunctionComponent<PopupInterface> = ({
   const toggleTree = (): void => setIsVisible(!isVisible);
 
   const handleClickOutside = (event: MouseEvent): void => {
-    event.preventDefault();
-
     if (
       wrapperRef.current &&
       !wrapperRef.current.contains(event.target as Element)
