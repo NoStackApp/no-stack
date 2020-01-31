@@ -14,6 +14,20 @@ export const EXECUTE_ACTION = gql`
   }
 `;
 
+export const EXECUTE = gql`
+  mutation EXECUTE(
+    $actionId: ID!
+    $executionParameters: String
+    $unrestricted: Boolean
+  ) {
+    Execute(
+      actionId: $actionId
+      executionParameters: $executionParameters
+      unrestricted: $unrestricted
+    )
+  }
+`;
+
 export const CREATE_INSTANCE = gql`
   mutation CREATE_INSTANCE(
     $id: ID!
