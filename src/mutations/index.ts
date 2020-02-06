@@ -118,6 +118,7 @@ export const REGISTER_USER = gql`
     $lastName: String!
     $email: String!
     $password: String!
+    $formValues: String!
   ) {
     user: CreateUserOnPlatform(
       userClass: $userClassId
@@ -126,6 +127,7 @@ export const REGISTER_USER = gql`
       lastName: $lastName
       email: $email
       password: $password
+      formValues: $formValues
     ) {
       id
       name
