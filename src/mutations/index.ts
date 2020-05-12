@@ -137,7 +137,7 @@ export const REGISTER_USER = gql`
 
 export const RESEND_CONFIRMATION = gql`
   mutation resendConfirmation($userNameOrEmail: String, $stackId: ID) {
-    ResendConfirmation(userNameOrEmail:$userNameOrEmail, stackId: $stackId)
+    ResendConfirmation(userNameOrEmail: $userNameOrEmail, stackId: $stackId)
   }
 `;
 
