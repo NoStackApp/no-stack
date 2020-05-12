@@ -135,6 +135,12 @@ export const REGISTER_USER = gql`
   }
 `;
 
+export const RESEND_CONFIRMATION = gql`
+  mutation resendConfirmation($userNameOrEmail: String, $stackId: ID) {
+    ResendConfirmation(userNameOrEmail:$userNameOrEmail, stackId:$stackId)
+  }
+`;
+
 export const FORGOT_PASSWORD = gql`
   mutation FORGOT_PASSWORD($userNameOrEmail: String!, $stackId: ID!) {
     ForgotPassword(userNameOrEmail: $userNameOrEmail, stackId: $stackId)
