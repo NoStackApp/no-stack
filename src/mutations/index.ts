@@ -6,7 +6,7 @@ export const EXECUTE_ACTION = gql`
     $executionParameters: String
     $unrestricted: Boolean
   ) {
-    ExecuteAction(
+    Execute(
       actionId: $actionId
       executionParameters: $executionParameters
       unrestricted: $unrestricted
