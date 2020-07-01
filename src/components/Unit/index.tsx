@@ -27,7 +27,7 @@ export interface Instance {
 }
 
 export interface Response {
-  ExecuteAction: string;
+  Execute: string;
 }
 
 export const Unit: React.FunctionComponent<UnitInterface> = ({
@@ -60,7 +60,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     if (instance) {
       newInstance = instance;
     } else {
-      const data = response.data && JSON.parse(response.data.ExecuteAction);
+      const data = response.data && JSON.parse(response.data.Execute);
 
       newInstance = {
         id: data.instanceId,
@@ -95,7 +95,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     instanceId: string,
     fragment: DocumentNode,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
-    const data = response.data && JSON.parse(response.data.ExecuteAction);
+    const data = response.data && JSON.parse(response.data.Execute);
 
     cache.writeFragment({
       id: `${instanceId}Instance`,

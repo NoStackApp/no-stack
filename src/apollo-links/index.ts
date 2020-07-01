@@ -33,11 +33,11 @@ async function refreshToken(platformId: string): Promise<string | null> {
       },
     });
 
-    if (!res.data || !res.data.data || !res.data.data.ExecuteAction) {
+    if (!res.data || !res.data.data || !res.data.data.Execute) {
       return null;
     }
 
-    const response = JSON.parse(res.data.data.ExecuteAction);
+    const response = JSON.parse(res.data.data.Execute);
 
     if (
       !response.id ||

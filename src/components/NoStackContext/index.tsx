@@ -144,7 +144,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       return { error: err };
     });
 
-    if (res.error || !res.data || !res.data.ExecuteAction) {
+    if (res.error || !res.data || !res.data.Execute) {
       if (res.error.networkError) {
         throw res.error.networkError;
       }
@@ -156,7 +156,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       throw new Error('Unknown error.');
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.Execute);
 
     if (
       !response.id ||
@@ -239,11 +239,11 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       return { error: err };
     });
 
-    if (res.error || !res.data || !res.data.ExecuteAction) {
+    if (res.error || !res.data || !res.data.Execute) {
       return this.logout();
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.Execute);
 
     if (
       !response.id ||
@@ -286,11 +286,11 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       return { error: err };
     });
 
-    if (res.error || !res.data || !res.data.ExecuteAction) {
+    if (res.error || !res.data || !res.data.Execute) {
       throw new Error('Expired/Invalid Token');
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.Execute);
 
     if (
       !response.id ||
@@ -327,7 +327,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 }
 
 export interface Response {
-  ExecuteAction: string;
+  Execute: string;
 }
 
 export interface Variables {
