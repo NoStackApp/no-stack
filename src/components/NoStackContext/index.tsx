@@ -10,7 +10,7 @@ import { ApolloProvider, MutationFunction } from '@apollo/react-common';
 import { ApolloClient, ApolloError } from 'apollo-client';
 import { NormalizedCache } from 'apollo-cache-inmemory';
 
-import { EXECUTE_ACTION } from '../../mutations';
+import { EXECUTE } from '../../mutations';
 
 export interface User {
   id: string;
@@ -153,13 +153,14 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
         throw res.error.graphQLErrors[0];
       }
 
-      throw new Error('Unknown error.');
+      console.log(`error logging ins: ${JSON.stringify(res.error, null, 2)}`);
+
+      throw new Error('Unknown error logging in.');
     }
 
     const response = JSON.parse(res.data.Execute);
 
     if (
-      !response.id ||
       !response.userId ||
       !response.userName ||
       !response.role ||
@@ -167,7 +168,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       !response.AuthenticationResult.AccessToken ||
       !response.AuthenticationResult.RefreshToken
     ) {
-      throw new Error('Unknown error.');
+      throw new Error('Missing data from server on login.');
     }
 
     this.setUser(
@@ -246,7 +247,6 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     const response = JSON.parse(res.data.Execute);
 
     if (
-      !response.id ||
       !response.AuthenticationResult ||
       !response.AuthenticationResult.AccessToken
     ) {
@@ -292,12 +292,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
     const response = JSON.parse(res.data.Execute);
 
-    if (
-      !response.id ||
-      !response.userId ||
-      !response.role ||
-      !response.accessToken
-    ) {
+    if (!response.userId || !response.role || !response.accessToken) {
       throw new Error('Expired/Invalid Token');
     }
 
@@ -342,7 +337,7 @@ export const NoStackProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ client, platformId, children }): JSX.Element => (
   <ApolloProvider client={client}>
-    <Mutation mutation={EXECUTE_ACTION}>
+    <Mutation mutation={EXECUTE}>
       {(loginUser: MutationFunction): JSX.Element => (
         <RawNoStackProvider
           client={client}

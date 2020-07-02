@@ -611,10 +611,10 @@ a mutation helper you can plug into Apollo's `<Mutation>` component called `EXEC
 
 ```javascript
 import { Mutation } from '@apollo/react-components';
-import { EXECUTE_ACTION } from '@nostack/no-stack';
+import { EXECUTE } from '@nostack/no-stack';
 
 const YourComponent = () => (
-  <Mutation mutation={EXECUTE_ACTION} >
+  <Mutation mutation={EXECUTE} >
   {(executeAction, { data }) =>
     if (data) {
       console.log(data);
@@ -642,7 +642,7 @@ Or, via Apollo's `graphql` HOC:
 
 ```javascript
 import { graphql } from '@apollo/react-hoc';
-import { EXECUTE_ACTION } from '@nostack/no-stack';
+import { EXECUTE } from '@nostack/no-stack';
 
 const YourComponent = ({ executeAction }) => (
   <div>
@@ -663,18 +663,18 @@ const YourComponent = ({ executeAction }) => (
 );
 
 export default graphql(
-  EXECUTE_ACTION,
+  EXECUTE,
   {
     name: 'executeAction',
   },
 )(YourComponent);
 ```
 
-Depending on its type, the action called with `EXECUTE_ACTION` can perform different
+Depending on its type, the action called with `EXECUTE` can perform different
 mutations, including but not limited to creating/updating/deleting instances, logging
 in/out, and user registration.
 
-#### EXECUTE_ACTION SIGNATURE
+#### EXECUTE SIGNATURE
 
 | Variable            | Description                                                             | Value                                                      | Required              |
 | ------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------- |

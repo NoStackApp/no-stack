@@ -4,7 +4,7 @@ import { HttpLink } from 'apollo-link-http';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
-import { EXECUTE_ACTION } from '../mutations';
+import { EXECUTE } from '../mutations';
 import { NO_STACK_URI } from '../config';
 
 async function refreshToken(platformId: string): Promise<string | null> {
@@ -23,7 +23,7 @@ async function refreshToken(platformId: string): Promise<string | null> {
       url: NO_STACK_URI,
       method: 'post',
       data: {
-        query: EXECUTE_ACTION,
+        query: EXECUTE,
         variables: {
           // REFRESH TOKEN ACTION
           actionId: '96d3be63-53c5-418e-9167-71e3d43271e3',
