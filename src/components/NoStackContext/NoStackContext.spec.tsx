@@ -3,7 +3,7 @@ import { render, wait, fireEvent } from '@testing-library/react';
 import { createMockClient } from 'mock-apollo-client';
 import faker from 'faker';
 
-import { EXECUTE_ACTION } from 'mutations';
+import { EXECUTE } from 'mutations';
 
 import { NoStackProvider, NoStackConsumer, withNoStack } from '.';
 
@@ -43,7 +43,7 @@ describe('<NoStackConsumer />', () => {
     },
   });
 
-  mockClient.setRequestHandler(EXECUTE_ACTION, queryHandler);
+  mockClient.setRequestHandler(EXECUTE, queryHandler);
 
   beforeEach(() => {
     store = {};
@@ -204,7 +204,7 @@ describe('withNoStack() HOC', () => {
     },
   });
 
-  mockClient.setRequestHandler(EXECUTE_ACTION, queryHandler);
+  mockClient.setRequestHandler(EXECUTE, queryHandler);
 
   beforeEach(() => {
     store = {};
