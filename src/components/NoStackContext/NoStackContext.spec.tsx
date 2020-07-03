@@ -69,16 +69,16 @@ describe('<NoStackConsumer />', () => {
     localStorage.setItem('accessToken', AccessToken);
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
+      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
         <NoStackConsumer>
-          {({ platformId, currentUser, loading }): JSX.Element | null => {
+          {({ stackId, currentUser, loading }): JSX.Element | null => {
             if (loading) {
               return null;
             }
 
             return (
               <>
-                <div>{platformId}</div>
+                <div>{stackId}</div>
                 <div>{currentUser.id}</div>
                 <div>{currentUser.username}</div>
                 <div>{currentUser.role}</div>
@@ -108,7 +108,7 @@ describe('<NoStackConsumer />', () => {
     jest.spyOn(mockClient, 'resetStore');
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
+      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
         <NoStackConsumer>
           {({ loading, login, logout }): JSX.Element | null => {
             if (loading) {
@@ -155,7 +155,7 @@ describe('<NoStackConsumer />', () => {
       executionParameters: JSON.stringify({
         userName: mockUserName,
         password: mockPassword,
-        platformId: mockPlatformId,
+        stackId: mockPlatformId,
       }),
       unrestricted: true,
     });
@@ -229,26 +229,24 @@ describe('withNoStack() HOC', () => {
   it('should return platform and user info when logged in', async () => {
     localStorage.setItem('accessToken', AccessToken);
 
-    const TestComponent = withNoStack(
-      ({ platformId, currentUser, loading }) => {
-        if (loading) {
-          return null;
-        }
+    const TestComponent = withNoStack(({ stackId, currentUser, loading }) => {
+      if (loading) {
+        return null;
+      }
 
-        return (
-          <>
-            <div>{platformId}</div>
-            <div>{currentUser.id}</div>
-            <div>{currentUser.username}</div>
-            <div>{currentUser.role}</div>
-            <div>{currentUser.accessToken}</div>
-          </>
-        );
-      },
-    );
+      return (
+        <>
+          <div>{stackId}</div>
+          <div>{currentUser.id}</div>
+          <div>{currentUser.username}</div>
+          <div>{currentUser.role}</div>
+          <div>{currentUser.accessToken}</div>
+        </>
+      );
+    });
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
+      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
         <TestComponent />
       </NoStackProvider>,
     );
@@ -296,7 +294,7 @@ describe('withNoStack() HOC', () => {
     });
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
+      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
         <TestComponent />
       </NoStackProvider>,
     );
@@ -318,7 +316,7 @@ describe('withNoStack() HOC', () => {
       executionParameters: JSON.stringify({
         userName: mockUserName,
         password: mockPassword,
-        platformId: mockPlatformId,
+        stackId: mockPlatformId,
       }),
       unrestricted: true,
     });

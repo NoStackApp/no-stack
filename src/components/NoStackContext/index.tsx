@@ -11,6 +11,11 @@ import { ApolloClient, ApolloError } from 'apollo-client';
 import { NormalizedCache } from 'apollo-cache-inmemory';
 
 import { EXECUTE } from '../../mutations';
+import {
+  LOGIN_ACTION_ID,
+  REFRESH_TOKEN_ACTION_ID,
+  VERIFY_TOKEN_ACTION_ID,
+} from '../../config';
 
 export interface User {
   id: string;
@@ -20,7 +25,7 @@ export interface User {
 }
 
 export interface ContextInterface {
-  platformId: string | null;
+  stackId: string | null;
   currentUser: User | null;
   client?: ApolloClient<NormalizedCache>;
   loading: boolean;
@@ -35,7 +40,7 @@ export interface ContextInterface {
 }
 
 const { Provider, Consumer } = createContext<ContextInterface>({
-  platformId: null,
+  stackId: null,
   currentUser: null,
   client: undefined,
   loading: true,
@@ -61,8 +66,8 @@ export const NoStackConsumer: FunctionComponent<{
 
 export interface ProviderProps {
   client: ApolloClient<NormalizedCache>;
-  platformId: string | null;
-  loginUser: (options: object) => Promise<any>;
+  stackId: string | null;
+  updateAuth: (options: object) => Promise<any>;
 }
 
 export interface ProviderState {
@@ -122,18 +127,18 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     username: string;
     password: string;
   }): Promise<unknown> => {
-    const { loginUser, platformId } = this.props;
+    const { updateAuth, stackId } = this.props;
 
     const executionParameters = JSON.stringify({
       userName: username,
       password,
-      platformId,
+      stackId,
     });
 
-    const res = await loginUser({
+    const res = await updateAuth({
       variables: {
         // LOGIN ACTION
-        actionId: 'a0d89c1f-c423-45e0-9339-c719dcbb7afe',
+        actionId: LOGIN_ACTION_ID,
         executionParameters,
         unrestricted: true,
       },
@@ -153,7 +158,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
         throw res.error.graphQLErrors[0];
       }
 
-      console.log(`error logging ins: ${JSON.stringify(res.error, null, 2)}`);
+      console.log(`error logging in: ${JSON.stringify(res.error, null, 2)}`);
 
       throw new Error('Unknown error logging in.');
     }
@@ -217,19 +222,22 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
   }
 
   public async refreshToken(): Promise<string | void> {
-    const { loginUser: refreshAccessToken, platformId } = this.props;
+    const { updateAuth: refreshAccessToken, stackId } = this.props;
 
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       return this.logout();
     }
 
-    const executionParameters = JSON.stringify({ refreshToken, platformId });
+    const executionParameters = JSON.stringify({
+      refreshToken,
+      stackId,
+    });
 
     const res = await refreshAccessToken({
       variables: {
         // REFRESH TOKEN ACTION
-        actionId: '96d3be63-53c5-418e-9167-71e3d43271e3',
+        actionId: REFRESH_TOKEN_ACTION_ID,
         executionParameters,
         unrestricted: true,
       },
@@ -261,8 +269,18 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     return response.AuthenticationResult.AccessToken;
   }
 
+  /*
+  The sequence of auth control seems to be:
+    1. get the accessToken from local storage.
+    2. if there is none, logout.
+    3. otherwise, call verifyToken.
+    4. if good, set user data and we're done
+    5. if not, call refreshToken
+    6. if works, set data and we're done.
+    7. if not, logout, and user must log in again.
+   */
   public async loginWithToken(): Promise<User | void> {
-    const { loginUser, platformId } = this.props;
+    const { updateAuth, stackId } = this.props;
 
     const accessToken = localStorage.getItem('accessToken');
 
@@ -270,12 +288,15 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       return this.logout();
     }
 
-    const executionParameters = JSON.stringify({ accessToken, platformId });
+    const executionParameters = JSON.stringify({
+      accessToken,
+      stackId,
+    });
 
-    const res = await loginUser({
+    const res = await updateAuth({
       variables: {
         // VERIFY TOKEN/RETRIEVE USER ACTION
-        actionId: '1279e113-d70f-4a95-9890-a5cebd344f3d',
+        actionId: VERIFY_TOKEN_ACTION_ID,
         executionParameters,
         unrestricted: true,
       },
@@ -306,10 +327,10 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
   public render(): JSX.Element {
     const { currentUser, loading } = this.state;
-    const { platformId, children, client } = this.props;
+    const { stackId, children, client } = this.props;
 
     const providerProps = {
-      platformId,
+      stackId,
       currentUser,
       client,
       loading,
@@ -333,16 +354,16 @@ export interface Variables {
 
 export const NoStackProvider: FunctionComponent<{
   client: ApolloClient<NormalizedCache>;
-  platformId: string;
+  stackId: string;
   children: React.ReactNode;
-}> = ({ client, platformId, children }): JSX.Element => (
+}> = ({ client, stackId, children }): JSX.Element => (
   <ApolloProvider client={client}>
     <Mutation mutation={EXECUTE}>
       {(loginUser: MutationFunction): JSX.Element => (
         <RawNoStackProvider
           client={client}
-          platformId={platformId}
-          loginUser={loginUser}
+          stackId={stackId}
+          updateAuth={loginUser}
         >
           {children}
         </RawNoStackProvider>
