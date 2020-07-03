@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import { EXECUTE } from '../mutations';
 import { NO_STACK_URI } from '../config';
 
-async function refreshToken(platformId: string): Promise<string | null> {
+async function refreshToken(stackId: string): Promise<string | null> {
   const token = localStorage.getItem('refreshToken');
   if (!token) {
     return null;
@@ -15,7 +15,7 @@ async function refreshToken(platformId: string): Promise<string | null> {
 
   const executionParameters = JSON.stringify({
     refreshToken: token,
-    platformId,
+    platformId: stackId,
   });
 
   try {

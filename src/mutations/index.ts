@@ -1,19 +1,5 @@
 import gql from 'graphql-tag';
 
-// export const EXECUTE_ACTION = gql`
-//   mutation EXECUTE_ACTION(
-//     $actionId: ID!
-//     $executionParameters: String
-//     $unrestricted: Boolean
-//   ) {
-//     Execute(
-//       actionId: $actionId
-//       executionParameters: $executionParameters
-//       unrestricted: $unrestricted
-//     )
-//   }
-// `;
-
 export const EXECUTE = gql`
   mutation EXECUTE(
     $actionId: ID!
