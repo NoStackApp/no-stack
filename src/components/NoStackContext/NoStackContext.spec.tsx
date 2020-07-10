@@ -69,7 +69,7 @@ describe('<NoStackConsumer />', () => {
     localStorage.setItem('accessToken', AccessToken);
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
+      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
         <NoStackConsumer>
           {({ stackId, currentUser, loading }): JSX.Element | null => {
             if (loading) {
@@ -108,7 +108,7 @@ describe('<NoStackConsumer />', () => {
     jest.spyOn(mockClient, 'resetStore');
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
+      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
         <NoStackConsumer>
           {({ loading, login, logout }): JSX.Element | null => {
             if (loading) {
@@ -155,7 +155,7 @@ describe('<NoStackConsumer />', () => {
       executionParameters: JSON.stringify({
         userName: mockUserName,
         password: mockPassword,
-        stackId: mockPlatformId,
+        platformId: mockPlatformId,
       }),
       unrestricted: true,
     });
@@ -246,7 +246,7 @@ describe('withNoStack() HOC', () => {
     });
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
+      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
         <TestComponent />
       </NoStackProvider>,
     );
@@ -294,7 +294,7 @@ describe('withNoStack() HOC', () => {
     });
 
     const { container, getByText } = render(
-      <NoStackProvider client={mockClient} stackId={mockPlatformId}>
+      <NoStackProvider client={mockClient} platformId={mockPlatformId}>
         <TestComponent />
       </NoStackProvider>,
     );
@@ -316,7 +316,7 @@ describe('withNoStack() HOC', () => {
       executionParameters: JSON.stringify({
         userName: mockUserName,
         password: mockPassword,
-        stackId: mockPlatformId,
+        platformId: mockPlatformId,
       }),
       unrestricted: true,
     });

@@ -112,6 +112,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
   public logout = (cb?: () => void): void => {
     const { client } = this.props;
+    console.log(`about to logout.`);
 
     localStorage.clear();
 
@@ -132,9 +133,11 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     const executionParameters = JSON.stringify({
       userName: username,
       password,
-      stackId,
+      platformId: stackId,
     });
 
+    console.log(`in login with new version ... stackId = ${stackId}; 
+    executionParameters = ${JSON.stringify(executionParameters, null, 2)}`);
     const res = await updateAuth({
       variables: {
         // LOGIN ACTION
@@ -222,7 +225,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
   }
 
   public async refreshToken(): Promise<string | void> {
-    const { updateAuth: refreshAccessToken, stackId } = this.props;
+    const { updateAuth, stackId } = this.props;
 
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
@@ -231,10 +234,13 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
     const executionParameters = JSON.stringify({
       refreshToken,
-      stackId,
+      platformId: stackId,
     });
 
-    const res = await refreshAccessToken({
+    console.log(`in refreshToken...; 
+    executionParameters = ${JSON.stringify(executionParameters, null, 2)}`);
+
+    const res = await updateAuth({
       variables: {
         // REFRESH TOKEN ACTION
         actionId: REFRESH_TOKEN_ACTION_ID,
@@ -247,6 +253,9 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     } => {
       return { error: err };
     });
+
+    console.log(`in refreshToken...; 
+    res = ${JSON.stringify(res, null, 2)}`);
 
     if (res.error || !res.data || !res.data.Execute) {
       return this.logout();
@@ -270,7 +279,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
   }
 
   /*
-  The sequence of auth control seems to be:
+  The sequence of auth control when opening a unit seems to be:
     1. get the accessToken from local storage.
     2. if there is none, logout.
     3. otherwise, call verifyToken.
@@ -290,7 +299,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
     const executionParameters = JSON.stringify({
       accessToken,
-      stackId,
+      platformId: stackId,
     });
 
     const res = await updateAuth({
@@ -354,15 +363,15 @@ export interface Variables {
 
 export const NoStackProvider: FunctionComponent<{
   client: ApolloClient<NormalizedCache>;
-  stackId: string;
+  platformId: string;
   children: React.ReactNode;
-}> = ({ client, stackId, children }): JSX.Element => (
+}> = ({ client, platformId, children }): JSX.Element => (
   <ApolloProvider client={client}>
     <Mutation mutation={EXECUTE}>
       {(loginUser: MutationFunction): JSX.Element => (
         <RawNoStackProvider
           client={client}
-          stackId={stackId}
+          stackId={platformId}
           updateAuth={loginUser}
         >
           {children}

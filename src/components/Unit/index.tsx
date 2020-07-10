@@ -54,47 +54,61 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
 
   const updateUnitAfterCreateAction = (
     instance: Instance,
-  ): MutationUpdaterFn<Response> => (cache, response): void => {
-    let newInstance: Instance;
-
-    if (instance) {
-      newInstance = instance;
-    } else {
-      const data = response.data && JSON.parse(response.data.Execute);
-
-      newInstance = {
-        id: data.instanceId,
-        instance: {
-          id: data.instanceId,
-          value: data.value,
-          __typename: 'Instance',
-        },
-        __typename: 'InstanceWithTypedChildren',
-      };
-    }
-
-    const { unitData } = cache.readQuery({
-      query,
-      variables: {
-        ...queryVariables,
-      },
-    }) as { unitData: Instance[] };
-
-    cache.writeQuery({
-      query,
-      variables: {
-        ...queryVariables,
-      },
-      data: {
-        unitData: [newInstance, ...unitData],
-      },
-    });
-  };
+  ) => {
+    console.log(`in updateUnitAfterCreateAction`);
+    this.refetch;
+  }
+  // const updateUnitAfterCreateAction = (
+  //   instance: Instance,
+  // ): MutationUpdaterFn<Response> => (cache, response): void => {
+  //   let newInstance: Instance;
+  //   console.log(`in updateUnitAfterCreateAction`);
+  //
+  //   if (instance) {
+  //     newInstance = instance;
+  //   } else {
+  //     const data = response.data && JSON.parse(response.data.Execute);
+  //
+  //     newInstance = {
+  //       id: data.instanceId,
+  //       instance: {
+  //         id: data.instanceId,
+  //         value: data.value,
+  //         __typename: 'Instance',
+  //       },
+  //       __typename: 'InstanceWithTypedChildren',
+  //     };
+  //   }
+  //
+  //   const { unitData } = cache.readQuery({
+  //     query,
+  //     variables: {
+  //       ...queryVariables,
+  //     },
+  //   }) as { unitData: Instance[] };
+  //
+  //   cache.writeQuery({
+  //     query,
+  //     variables: {
+  //       ...queryVariables,
+  //     },
+  //     data: {
+  //       unitData: [newInstance, ...unitData],
+  //     },
+  //   });
+  // };
 
   const updateUnitInstanceAfterUpdateAction = (
     instanceId: string,
     fragment: DocumentNode,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
+    console.log(
+      `in updateUnitInstanceAfterUpdateAction.  response = ${JSON.stringify(
+        response,
+        null,
+        2,
+      )}`,
+    );
     const data = response.data && JSON.parse(response.data.Execute);
 
     cache.writeFragment({
@@ -111,6 +125,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
   const updateUnitAfterDeleteAction = (
     instanceId: string,
   ): MutationUpdaterFn<Response> => (cache): void => {
+    console.log(`in updateUnitAfterDeleteAction`);
     const { unitData } = cache.readQuery({
       query,
       variables: {
