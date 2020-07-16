@@ -56,6 +56,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     instance: Instance,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
     let newInstance: Instance;
+    console.log(`in updateUnitAfterCreateAction`);
 
     if (instance) {
       newInstance = instance;
@@ -95,6 +96,13 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     instanceId: string,
     fragment: DocumentNode,
   ): MutationUpdaterFn<Response> => (cache, response): void => {
+    console.log(
+      `in updateUnitInstanceAfterUpdateAction.  response = ${JSON.stringify(
+        response,
+        null,
+        2,
+      )}`,
+    );
     const data = response.data && JSON.parse(response.data.Execute);
 
     cache.writeFragment({
@@ -111,6 +119,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
   const updateUnitAfterDeleteAction = (
     instanceId: string,
   ): MutationUpdaterFn<Response> => (cache): void => {
+    console.log(`in updateUnitAfterDeleteAction`);
     const { unitData } = cache.readQuery({
       query,
       variables: {

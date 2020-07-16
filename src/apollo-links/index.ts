@@ -4,10 +4,24 @@ import { HttpLink } from 'apollo-link-http';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
-import { EXECUTE } from '../mutations';
-import { NO_STACK_URI } from '../config';
+// import { EXECUTE } from '../mutations';
+import { NO_STACK_URI, REFRESH_TOKEN_ACTION_ID } from '../config';
 
-async function refreshToken(stackId: string): Promise<string | null> {
+const EXECUTE = `
+  mutation EXECUTE(
+    $actionId: ID!
+    $executionParameters: String
+    $unrestricted: Boolean
+  ) {
+    Execute(
+      actionId: $actionId
+      executionParameters: $executionParameters
+      unrestricted: $unrestricted
+    )
+  }
+`;
+
+export async function refreshToken(stackId: string): Promise<string | null> {
   const token = localStorage.getItem('refreshToken');
   if (!token) {
     return null;
@@ -19,6 +33,7 @@ async function refreshToken(stackId: string): Promise<string | null> {
   });
 
   try {
+    console.log(`inside refreshToken in ts.  stackId = ${stackId}`);
     const res = await axios({
       url: NO_STACK_URI,
       method: 'post',
@@ -26,18 +41,21 @@ async function refreshToken(stackId: string): Promise<string | null> {
         query: EXECUTE,
         variables: {
           // REFRESH TOKEN ACTION
-          actionId: '96d3be63-53c5-418e-9167-71e3d43271e3',
+          actionId: REFRESH_TOKEN_ACTION_ID,
           executionParameters,
           unrestricted: true,
         },
       },
     });
 
+    // console.log(`res in ts.  res = ${JSON.stringify(res, null, 2)}`);
+
     if (!res.data || !res.data.data || !res.data.data.Execute) {
       return null;
     }
 
-    const response = JSON.parse(res.data.data.Execute);
+    const response = JSON.parse(res.data.Execute);
+    // console.log(`response in ts = ${JSON.stringify(response, null, 2)}`);
 
     if (
       !response.id ||

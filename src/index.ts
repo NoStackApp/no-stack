@@ -17,3 +17,5 @@ export * from './mutations';
 export * from './apollo-links';
 
 export * from './config';
+
+export { refreshToken } from './apollo-links/index';

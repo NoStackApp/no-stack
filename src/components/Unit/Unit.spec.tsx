@@ -55,6 +55,21 @@ const testData = [
   },
 ];
 
+// const testData = [
+//     {
+//         instance: {
+//             id: faker.random.uuid(),
+//             value: faker.random.words(),
+//         },
+//     },
+//     {
+//         instance: {
+//             id: faker.random.uuid(),
+//             value: faker.random.words(),
+//         },
+//     }
+// ]
+
 describe('Unit component', () => {
   const mocks = [
     {
