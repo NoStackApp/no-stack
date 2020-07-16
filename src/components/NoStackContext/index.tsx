@@ -204,13 +204,13 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     try {
       user = await this.loginWithToken();
     } catch (e) {
-      user = await this.retrieveUserWithRefreshedToken();
+      user = await this.retrieveUserWithRefreshToken();
     }
 
     return user;
   }
 
-  private async retrieveUserWithRefreshedToken(): Promise<User | void> {
+  private async retrieveUserWithRefreshToken(): Promise<User | void> {
     let user;
 
     try {

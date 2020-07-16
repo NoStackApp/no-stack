@@ -21,7 +21,7 @@ const EXECUTE = `
   }
 `;
 
-async function refreshToken(stackId: string): Promise<string | null> {
+export async function refreshToken(stackId: string): Promise<string | null> {
   const token = localStorage.getItem('refreshToken');
   if (!token) {
     return null;
@@ -48,7 +48,7 @@ async function refreshToken(stackId: string): Promise<string | null> {
       },
     });
 
-    console.log(`res in ts.  res = ${JSON.stringify(res, null, 2)}`);
+    // console.log(`res in ts.  res = ${JSON.stringify(res, null, 2)}`);
 
     if (!res.data || !res.data.data || !res.data.data.Execute) {
       return null;
