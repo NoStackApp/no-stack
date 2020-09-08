@@ -37,7 +37,7 @@ describe('<NoStackConsumer />', () => {
 
   const queryHandler = jest.fn().mockResolvedValue({
     data: {
-      Execute: JSON.stringify({
+      execute: JSON.stringify({
         ...mockUser,
       }),
     },
@@ -198,7 +198,7 @@ describe('withNoStack() HOC', () => {
 
   const queryHandler = jest.fn().mockResolvedValue({
     data: {
-      Execute: JSON.stringify({
+      execute: JSON.stringify({
         ...mockUser,
       }),
     },

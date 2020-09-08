@@ -50,11 +50,11 @@ export async function refreshToken(stackId: string): Promise<string | null> {
 
     // console.log(`res in ts.  res = ${JSON.stringify(res, null, 2)}`);
 
-    if (!res.data || !res.data.data || !res.data.data.Execute) {
+    if (!res.data || !res.data.data || !res.data.data.execute) {
       return null;
     }
 
-    const response = JSON.parse(res.data.Execute);
+    const response = JSON.parse(res.data.execute);
     // console.log(`response in ts = ${JSON.stringify(response, null, 2)}`);
 
     if (

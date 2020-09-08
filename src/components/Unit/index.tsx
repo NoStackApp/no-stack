@@ -27,7 +27,7 @@ export interface Instance {
 }
 
 export interface Response {
-  Execute: string;
+  execute: string;
 }
 
 export const Unit: React.FunctionComponent<UnitInterface> = ({
@@ -61,7 +61,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
     if (instance) {
       newInstance = instance;
     } else {
-      const data = response.data && JSON.parse(response.data.Execute);
+      const data = response.data && JSON.parse(response.data.execute);
 
       newInstance = {
         id: data.instanceId,
@@ -103,7 +103,7 @@ export const Unit: React.FunctionComponent<UnitInterface> = ({
         2,
       )}`,
     );
-    const data = response.data && JSON.parse(response.data.Execute);
+    const data = response.data && JSON.parse(response.data.execute);
 
     cache.writeFragment({
       id: `${instanceId}Instance`,

@@ -152,7 +152,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       return { error: err };
     });
 
-    if (res.error || !res.data || !res.data.Execute) {
+    if (res.error || !res.data || !res.data.execute) {
       if (res.error.networkError) {
         throw res.error.networkError;
       }
@@ -166,7 +166,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       throw new Error('Unknown error logging in.');
     }
 
-    const response = JSON.parse(res.data.Execute);
+    const response = JSON.parse(res.data.execute);
 
     if (
       !response.userId ||
@@ -257,11 +257,11 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     console.log(`in refreshToken...; 
     res = ${JSON.stringify(res, null, 2)}`);
 
-    if (res.error || !res.data || !res.data.Execute) {
+    if (res.error || !res.data || !res.data.execute) {
       return this.logout();
     }
 
-    const response = JSON.parse(res.data.Execute);
+    const response = JSON.parse(res.data.execute);
 
     if (
       !response.AuthenticationResult ||
@@ -316,11 +316,11 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       return { error: err };
     });
 
-    if (res.error || !res.data || !res.data.Execute) {
+    if (res.error || !res.data || !res.data.execute) {
       throw new Error('Expired/Invalid Token');
     }
 
-    const response = JSON.parse(res.data.Execute);
+    const response = JSON.parse(res.data.execute);
 
     if (!response.userId || !response.role || !response.accessToken) {
       throw new Error('Expired/Invalid Token');
