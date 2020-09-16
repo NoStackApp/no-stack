@@ -9,7 +9,7 @@ import {
 
 export const SOURCE_QUERY = gql`
   query SOURCE($id: ID!) {
-    Source(id: $id) {
+    source(id: $id) {
       id
       name
       sortings {
