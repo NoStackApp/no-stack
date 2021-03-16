@@ -107,7 +107,7 @@ export const REGISTER_USER = gql`
     $formValues: String
   ) {
     user: createUserOnPlatform(
-      userClass: $userClassId
+      userClassId: $userClassId
       name: $name
       firstName: $firstName
       lastName: $lastName
@@ -123,7 +123,7 @@ export const REGISTER_USER = gql`
 
 // added 2020-05-07
 export const RESEND_CONFIRMATION = gql`
-  mutation resendConfirmation($userNameOrEmail: String, $stackId: ID) {
+  mutation resendConfirmation($userNameOrEmail: String!, $stackId: ID!) {
     resendConfirmation(userNameOrEmail: $userNameOrEmail, stackId: $stackId)
   }
 `;
