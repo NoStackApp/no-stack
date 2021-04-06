@@ -13,15 +13,15 @@ interface ButtonProps {
   buttonText?: string;
 }
 
-const RawLogoutButton: FunctionComponent<ButtonProps> = ({
+export const RawLogoutButton: FunctionComponent<ButtonProps> = ({
   currentUser = null,
   logout,
   buttonText = 'Log Out',
-}): JSX.Element =>
-  currentUser && (
+}): JSX.Element | null =>
+  currentUser ? (
     <Button type="button" onClick={(): void => logout()}>
       {buttonText}
     </Button>
-  );
+  ) : null;
 
 export const LogoutButton = withNoStack(RawLogoutButton);

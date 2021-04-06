@@ -4,10 +4,24 @@ import { HttpLink } from 'apollo-link-http';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
-import { EXECUTE_ACTION } from '../mutations';
-import { NO_STACK_URI } from '../config';
+// import { EXECUTE } from '../mutations';
+import { NO_STACK_URI, REFRESH_TOKEN_ACTION_ID } from '../config';
 
-async function refreshToken(platformId: string): Promise<string | null> {
+const EXECUTE = `
+  mutation EXECUTE(
+    $actionId: ID!
+    $executionParameters: String
+    $unrestricted: Boolean
+  ) {
+    Execute(
+      actionId: $actionId
+      executionParameters: $executionParameters
+      unrestricted: $unrestricted
+    )
+  }
+`;
+
+export async function refreshToken(stackId: string): Promise<string | null> {
   const token = localStorage.getItem('refreshToken');
   if (!token) {
     return null;
@@ -15,29 +29,33 @@ async function refreshToken(platformId: string): Promise<string | null> {
 
   const executionParameters = JSON.stringify({
     refreshToken: token,
-    platformId,
+    platformId: stackId,
   });
 
   try {
+    console.log(`inside refreshToken in ts.  stackId = ${stackId}`);
     const res = await axios({
       url: NO_STACK_URI,
       method: 'post',
       data: {
-        query: EXECUTE_ACTION,
+        query: EXECUTE,
         variables: {
           // REFRESH TOKEN ACTION
-          actionId: '96d3be63-53c5-418e-9167-71e3d43271e3',
+          actionId: REFRESH_TOKEN_ACTION_ID,
           executionParameters,
           unrestricted: true,
         },
       },
     });
 
-    if (!res.data || !res.data.ExecuteAction) {
+    // console.log(`res in ts.  res = ${JSON.stringify(res, null, 2)}`);
+
+    if (!res.data || !res.data.data || !res.data.data.execute) {
       return null;
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.execute);
+    // console.log(`response in ts = ${JSON.stringify(response, null, 2)}`);
 
     if (
       !response.id ||
@@ -54,6 +72,8 @@ async function refreshToken(platformId: string): Promise<string | null> {
 
     return response.AuthenticationResult.AccessToken;
   } catch (e) {
+    console.log(e);
+
     return null;
   }
 }
@@ -83,6 +103,7 @@ export const createAuthLink = (platformId: string): ApolloLink =>
 
       if (isExpired) {
         token = await refreshToken(platformId);
+
         if (!token) {
           localStorage.clear();
 

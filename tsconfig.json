@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "module": "ESNext",
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react",
@@ -22,7 +22,7 @@
       "*": ["*"]
     }
   },
-  "files": ["src/@types/graphql.d.ts"],
+  "typeRoots": ["node_modules/@types", "src/@types"],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -19,12 +19,11 @@ You start by declaring types of users called user classes. Then, you give each c
 actions. You can build whatever pages you like. You can declare and use data `Types`
 which have `Instances`. `Types` also have `Assns` (associations) between each other.
 
-A page can use data via `Sources`. Each source has some minimal necessary `Assns`
+A page can use data via `Units`. Each unit has some minimal necessary `Assns`
 and the `Types` that you need. You can also create `Constraints` on the `Instances`
 returned.
 
-This repository contains the `no-stack` helper components and functions. Documentation
-coming shortly...
+This repository contains the `no-stack` helper components and functions.
 
 ## Getting Started
 
@@ -106,6 +105,7 @@ Then edit `src/client/index.js`:
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { v4 } from 'uuid';
 
 import { createAuthLink, httpLink } from '@nostack/no-stack';
 
@@ -118,7 +118,8 @@ const link = ApolloLink.from([authLink, httpLink]);
 export default new ApolloClient({
   link,
   cache: new InMemoryCache({
-    dataIdFromObject: object => object.id,
+    dataIdFromObject: object =>
+      object.id ? object.id + object.__typename : v4(),
   }),
 });
 ```
@@ -130,11 +131,14 @@ Apollo's cache, `dataIdFromObject` must be set up like we did above, which we
 repeat here:
 
 ```javascript
+import { v4 } from 'uuid';
+
 const client = new ApolloClient({
   // ...other options...
   cache: new InMemoryCache({
     // ... other options ...
-    dataIdFromObject: object => object.id,
+    dataIdFromObject: object =>
+      object.id ? object.id + object.__typename : v4(),
   }),
 });
 ```
@@ -256,47 +260,36 @@ export default withNoStack(SomeComponent);
 `withNoStack` also provides the same props that `<NoStackConsumer>`'s FAAC provides.
 Feel free to use either, whatever suits your preference or situation.
 
-### Platform Management Console
+### User Registration
 
-After setting up authentication, the second thing you might want to implement
-is the `<Console>`.
-
-The `<Console>` component is provided for the sole purpose of managing your
-current platform (i.e. adding, editing, and deleting user classes). When a
-moderator is logged in, It displays a transparent button on the lower left
-(or lower right) corner of the page you insert it into. When that button
-is clicked, a modal showing your dashboard will pop up.
-
-You may place it anywhere on your app, as long as it's a child or further
-down the hierarchy of a `<NoStackProvider>`. We do suggest that you place it
-near the root of your application so that the button is accessible in all your pages.
-
-Sample usage:
+`no-stack` provides a `<RegistrationForm>` component for your app's user registration:
 
 ```javascript
-import { Console, NoStackProvider } from '@nostack/no-stack';
+import { PLATFORM_ID, TYPE_USER_ID } from './config';
 
-import RootComponent from './RootComponent';
-
-export default const App = () => (
-  <NoStackProvider>
-    <Console position="left" />
-    <RootComponent />
-  </NoStackProvider>
+export default SomeComponent = () => (
+  <div>
+    <RegistrationForm platformId={PLATFORM_ID} userClassId={TYPE_USER_ID} />
+  </div>
 );
 ```
 
-`position` prop - Displays your console either on the bottom `left` or
-bottom `right` of the current page (default: `left`)
+#### `<RegistrationForm>` Props
 
-### Data Retrieval via the `<Source>` Component (Experimental)
+- `plantformId` - The current platform's ID
 
-`no-stack` provides a `<Source>` component for retrieving data.
+- `userClassId` - The user class ID of the user to be created
+
+- `onSuccess(data)` - Callback function that will be invoked upon successful registration
+
+### Data Retrieval via the `<Unit>` Component (Experimental)
+
+`no-stack` provides a `<Unit>` component for retrieving data.
 `no-stack` uses GraphQL. See this [Intro to GraphQL](https://graphql.org/learn/)
 for more info about using GraphQL, and
 [GraphQL Queries](https://graphql.org/learn/queries/) in particular.
 
-The `no-stack` `Source` Component is very close to the
+The `no-stack` `Unit` Component is very close to the
 [Apollo Client Query Component](https://www.apollographql.com/docs/react/api/react-components/#query).
 Both take the same prop of a `query`.
 
@@ -304,18 +297,18 @@ Following is an example usage.
 
 ```javascript
 import React from 'react';
-import { Source } from '@nostack/no-stack';
+import { Unit } from '@nostack/no-stack';
 import gql from 'graphql-tag';
 
-const SOURCE_QUERY = gql`
-  query SOURCE(
+const UNIT_QUERY = gql`
+  query UNIT(
     $id: ID!
     $typeRelationships: String!
     $parameters: String
     $unrestricted: Boolean!
   ) {
-    sourceData(
-      sourceId: $id
+    unitData(
+      unitId: $id
       typeRelationships: $typeRelationships
       parameters: $parameters
       unrestricted: $unrestricted
@@ -326,16 +319,20 @@ const SOURCE_QUERY = gql`
         type
       }
       children {
-        instance {
-          id
-          value
-          type
-        }
-        children {
+        instances {
           instance {
             id
             value
             type
+          }
+          children {
+            instances {
+              instance {
+                id
+                value
+                type
+              }
+            }
           }
         }
       }
@@ -343,7 +340,7 @@ const SOURCE_QUERY = gql`
   }
 `;
 
-const sourceId = 'your-source-id';
+const unitId = 'your-unit-id';
 
 const typeRelationships = {
   'first-type-id': {
@@ -361,10 +358,10 @@ const YourComponent = ({ someParam }) => {
   };
 
   return (
-    <Source
-      id={sourceId}
+    <Unit
+      id={unitId}
       typeRelationships={typeRelationships}
-      query={SOURCE_QUERY}
+      query={UNIT_QUERY}
       unrestricted={unrestricted}
       parameters={parameters}
     >
@@ -377,32 +374,32 @@ const YourComponent = ({ someParam }) => {
 
         console.log(data);
 
-        return <div>Test Source</div>;
+        return <div>Test Unit</div>;
       }}
-    </Source>
+    </Unit>
   );
 };
 
 export default YourComponent;
 ```
 
-#### `<Source>` Props
+#### `<Unit>` Props
 
-- `id` - the source ID
+- `id` - the unit ID
 
 - `typeRelationships` - the desired return type hierarchy (see below)
 
 - `query` - the GraphQL tagged query string or file (see below)
 
 - `parameters` - an object consisting of key-value pairs representing the required
-  constraints of the source
+  constraints of the unit
 
 - `unrestricted` - boolean; `true` if data is available to public, `false` if
   otherwise. (default: false)
 
 #### `typeRelationships` Prop
 
-A source can be thought of as a virtual table, like a view in a relational database.
+A unit can be thought of as a virtual table, like a view in a relational database.
 Each type is like a column. In relational terms, the `typeRelationships` prop is
 like a "projection" (letting you specify which of the "columns" (types) you want
 returned in your request.
@@ -463,12 +460,12 @@ Some important notes:
 - If a type does not have child types, represent it by setting the type to `{}`.
 
 - Neither the choice of fields nor their place in the hierarchy will constrain the
-  data returned. The data for a source at any given moment is fixed, and the type
+  data returned. The data for a unit at any given moment is fixed, and the type
   hierarchy simply selects what columns are returned and the grouping. For example,
-  say that a source contains a set of doctors, nurses, and patients. Then all of
-  the doctors contained in that source will be returned whether the type hierarchy
+  say that a unit contains a set of doctors, nurses, and patients. Then all of
+  the doctors contained in that unit will be returned whether the type hierarchy
   has just doctors or doctors and nurses. The reason is that if a doctor had no nurses
-  than he or she would not be included in the source in the first place.
+  than he or she would not be included in the unit in the first place.
 
 - That said, the data returned is distinct within the selected sets. So a small
   `typeRelationships` might well return fewer instances than a larger one. The rule
@@ -480,7 +477,7 @@ Some important notes:
 
 #### `query` Prop
 
-As stated above, The `Source` Component is very close to the
+As stated above, The `Unit` Component is very close to the
 [Apollo Client Query Component](https://www.apollographql.com/docs/react/api/react-components/#query).
 Both take the same prop of a `query`.
 
@@ -490,8 +487,8 @@ In addition, you can provide a file that includes the complete query specificati
 The plan in the near future is to generate such files for you, which you can then
 insert into your project. In the meantime, you must generate it yourself.
 
-Fundamentally, the query `sourceData` is called with four variables (which is provided
-by `Source`'s props discussed above):
+Fundamentally, the query `unitData` is called with four variables (which is provided
+by `Unit`'s props discussed above):
 
 ```graphql
   $id: ID!
@@ -510,19 +507,21 @@ for an introduction.
 
 Specifically, information about the instances for types in your `typeHiearchy` are
 returned. For each returned instance you can choose from the following fields in
-your `SourceData` request:
+your `unitData` request:
 
 ```graphql
 {
-  id,
-  type,
+  id
+  type
   instance {
-    id,
-    value,
+    id
+    value
+    type
     order
-  },
+  }
   children {
     ...
+  }
 }
 ```
 
@@ -531,16 +530,9 @@ you desire up to the depth of its `typeRelationships`.
 
 The meaning of the fields is as follows:
 
-- `id` - current type's id
+- `typeId` - current type's id
 
-- `type` - the instance type
-
-- `instance` - the instance info. Specifically includes the `id` for the instance,
-  as well as it's `value` and an `order` if one exists. Every instance has an id;
-  some instances don't have values or orders.
-
-- `children` - any child instances for this instance. See the `typeRelationships`
-  explanation above to understand how the relationships are specified there.
+- `instances` - an array of instances of the given typeId
 
 Here is an example of the fields requested. This json specifies all of the data
 to a depth of 3:
@@ -555,20 +547,24 @@ to a depth of 3:
     order
   }
   children {
-    id
-    type
-    instance {
-      id
-      value
-      order
-    }
-    children {
-      id
-      type
+    typeId
+    instances {
       instance {
         id
         value
+        type
         order
+      }
+      children {
+        typeId
+        instances {
+          instance {
+            id
+            value
+            type
+            order
+          }
+        }
       }
     }
   }
@@ -578,28 +574,31 @@ to a depth of 3:
 In general, you should request up to the depth of your `typeRelationships` (see above).
 Anything less will be missing data, and anything more will not return anything.
 
-#### `<Source>` Function as a Child (FAAC) Props
+#### `<Unit>` Function as a Child (FAAC) Props
 
 - `loading` - boolean; `true` if data is still being fetched, `false` if otherwise.
 - `error` - error object; `null` if there's operation succeeds.
 - `data` - the data object.
-- `queryVariables` - object containing the props provided to the `<Source>` (refer
+- `queryVariables` - object containing the props provided to the `<Unit>` (refer
   to discussion above).
 - `refetchQueries` - a single element array containing the object to be fed to Apollo
   mutation's own `refetchQueries`property (see mutation discussion below).
-- `updateSourceAfterCreateAction(instance)` - a higher-order function function for
+- `updateUnitAfterCreateAction(instance)` - a higher-order function function for
   updating Apollo cache after creating an instance (see mutation discussion below).
-- `updateSourceAfterUpdateAction(instanceId, fragment)` - a higher-order function
-  for updating Apollo cache after updating an instance (see mutation discussion below).
+- `updateUnitInstanceAfterUpdateAction(instanceId, fragment)` - a higher-order function
+  for updating an instance in Apollo cache after updating an instance (see mutation
+  discussion below).
+- `updateUnitAfterDeleteAction(instanceId)` - a higher-order function for updating
+  Apollo cache after deleting an instance (see mutation discussion below).
 
-#### `<Source>` Inspector
+#### `<Unit>` Inspector
 
-In addition to data retrieval, the `<Source>` component also has a data inspector
+In addition to data retrieval, the `<Unit>` component also has a data inspector
 modal that is accessible to any logged-in platform moderator.
 
 You don't have to do anything special in your code to enable this feature. Once you're
 logged in as a moderator via `<NoStackConsumer>`, a button with the plus (+) sign
-will show on every instance of the `<Source>` component on the current page.
+will show on every instance of the `<Unit>` component on the current page.
 
 The inspector currently only shows the relationships between types of data (nodes)
 via a type tree graph visualization. But you will eventually be able to manage your
@@ -612,10 +611,10 @@ a mutation helper you can plug into Apollo's `<Mutation>` component called `EXEC
 
 ```javascript
 import { Mutation } from '@apollo/react-components';
-import { EXECUTE_ACTION } from '@nostack/no-stack';
+import { EXECUTE } from '@nostack/no-stack';
 
 const YourComponent = () => (
-  <Mutation mutation={EXECUTE_ACTION} >
+  <Mutation mutation={EXECUTE} >
   {(executeAction, { data }) =>
     if (data) {
       console.log(data);
@@ -643,7 +642,7 @@ Or, via Apollo's `graphql` HOC:
 
 ```javascript
 import { graphql } from '@apollo/react-hoc';
-import { EXECUTE_ACTION } from '@nostack/no-stack';
+import { EXECUTE } from '@nostack/no-stack';
 
 const YourComponent = ({ executeAction }) => (
   <div>
@@ -664,18 +663,18 @@ const YourComponent = ({ executeAction }) => (
 );
 
 export default graphql(
-  EXECUTE_ACTION,
+  EXECUTE,
   {
     name: 'executeAction',
   },
 )(YourComponent);
 ```
 
-Depending on its type, the action called with `EXECUTE_ACTION` can perform different
+Depending on its type, the action called with `EXECUTE` can perform different
 mutations, including but not limited to creating/updating/deleting instances, logging
 in/out, and user registration.
 
-#### EXECUTE_ACTION SIGNATURE
+#### EXECUTE SIGNATURE
 
 | Variable            | Description                                                             | Value                                                      | Required              |
 | ------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------- |
@@ -692,7 +691,7 @@ Usually, after calling GraphQL mutations, or particularly in `no-stack`'s case, 
 mutations, the data on the backend and on the Apollo Cache become out of sync. To
 keep Apollo Cache in sync, [you need to access it directly](https://www.apollographql.com/docs/react/advanced/caching/#direct-cache-access).
 
-To help make this process easier, no-stack's `<Source>` component provides a few
+To help make this process easier, no-stack's `<Unit>` component provides a few
 helpers via its render props. (Note: Sample usage code is from the demo [Todo App](https://github.com/NoStackApp/stackbox-todo).)
 
 #### `refetchQueries`
@@ -705,26 +704,30 @@ API.
 
 For usage, see [`<CreateIsCompletedForm>`](https://github.com/NoStackApp/stackbox-todo/blob/non-root-list-type/src/components/CreateIsCompletedForm/index.js#L40).
 
-#### `updateSourceAfterCreateAction(instance)`
+#### `updateUnitAfterCreateAction(instance)`
 
-`updateSourceAfterCreateAction` is a higher-order function that returns a function
+`updateUnitAfterCreateAction` is a higher-order function that returns a function
 that fits the signature for the callback used by [Apollo mutation's `update` property](https://www.apollographql.com/docs/react/api/react-apollo/#optionsupdate).
 As the function name suggests, this is mostly suitable after an action that creates
 an instance.
 
 For sample usage, see [`<CreateProjectForm>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/CreateProjectForm/index.js#L43).
-Note: `<CreateProjectForm>`'s parent passes it `updateSourceAfterCreateAction` as
+Note: `<CreateProjectForm>`'s parent passes it `updateUnitAfterCreateAction` as
 the `onAdd` prop.
 
 A slightly more complicated usage is found in [`<CreateTodoForm>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/CreateTodoForm/index.js#L79).
 
-#### `updateSourceAfterUpdateAction(instanceId, fragment)`
+#### `updateUnitInstanceAfterUpdateAction(instanceId, fragment)`
 
-`updateSourceAfterUpdateAction` is similar to `updateSourceAfterCreateAction`, but
-it is meant to be used for updating the cache after an action that updates an instance.
+`updateUnitInstanceAfterUpdateAction` is similar to `updateUnitAfterCreateAction`,
+but it is meant to be used for updating a given instance in the cache after an
+action that updates it on the backend.
 
 For sample usage, see [`<Project>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/Project/index.js#L57).
 
-#### `updateSourceAfterDeleteAction(instanceId, fragment)`
+#### `updateUnitAfterDeleteAction(instanceId)`
 
-(_To be implemented_)
+`updateUnitAfterDeleteAction` is similar to `updateUnitAfterDeleteAction`, but
+it is meant to be used for updating the cache after an action that deletes an instance.
+
+For sample usage, see [`<Project>`](https://github.com/NoStackApp/stackbox-todo/blob/yisroel/src/components/Project/index.js#L75).

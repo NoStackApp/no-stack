@@ -1,8 +1,5 @@
-export const AWS_CONFIG = {
-  region: 'us-west-2',
-  UserPoolId: 'us-west-2_m5JX5p7P0',
-  ClientId: '5uaag7pfc565c324v2r8om4tu1',
-  identityPoolId: 'us-west-2:415abfa9-619c-4ab5-aa20-c5b9ad1edbc0',
-};
+export const NO_STACK_URI = 'https://api.nostack.net/graphql';
 
-export const NO_STACK_URI = 'https://api.matchlynx.com/graphql';
+export const VERIFY_TOKEN_ACTION_ID = '1279e113-d70f-4a95-9890-a5cebd344f3d';
+export const REFRESH_TOKEN_ACTION_ID = '96d3be63-53c5-418e-9167-71e3d43271e3';
+export const LOGIN_ACTION_ID = 'a0d89c1f-c423-45e0-9339-c719dcbb7afe';

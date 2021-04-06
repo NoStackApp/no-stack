@@ -10,7 +10,12 @@ import { ApolloProvider, MutationFunction } from '@apollo/react-common';
 import { ApolloClient, ApolloError } from 'apollo-client';
 import { NormalizedCache } from 'apollo-cache-inmemory';
 
-import { EXECUTE_ACTION } from '../../mutations';
+import { EXECUTE } from '../../mutations';
+import {
+  LOGIN_ACTION_ID,
+  REFRESH_TOKEN_ACTION_ID,
+  VERIFY_TOKEN_ACTION_ID,
+} from '../../config';
 
 export interface User {
   id: string;
@@ -20,7 +25,7 @@ export interface User {
 }
 
 export interface ContextInterface {
-  platformId: string | null;
+  stackId: string | null;
   currentUser: User | null;
   client?: ApolloClient<NormalizedCache>;
   loading: boolean;
@@ -35,7 +40,7 @@ export interface ContextInterface {
 }
 
 const { Provider, Consumer } = createContext<ContextInterface>({
-  platformId: null,
+  stackId: null,
   currentUser: null,
   client: undefined,
   loading: true,
@@ -61,8 +66,8 @@ export const NoStackConsumer: FunctionComponent<{
 
 export interface ProviderProps {
   client: ApolloClient<NormalizedCache>;
-  platformId: string | null;
-  loginUser: (options: object) => Promise<any>;
+  stackId: string | null;
+  updateAuth: (options: object) => Promise<any>;
 }
 
 export interface ProviderState {
@@ -77,17 +82,12 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
   };
 
   public async componentDidMount(): Promise<void> {
-    let user;
-    try {
-      user = await this.loginWithToken();
-    } catch (e) {
-      await this.refreshToken();
-
-      user = await this.loginWithToken();
-    }
+    const user = await this.retrieveUserWithToken();
 
     if (user) {
       this.setUser(user.id, user.username, user.role, user.accessToken);
+    } else {
+      this.logout();
     }
 
     this.setState({
@@ -112,6 +112,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
   public logout = (cb?: () => void): void => {
     const { client } = this.props;
+    console.log(`about to logout.`);
 
     localStorage.clear();
 
@@ -127,33 +128,31 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     username: string;
     password: string;
   }): Promise<unknown> => {
-    const { loginUser, platformId } = this.props;
+    const { updateAuth, stackId } = this.props;
 
     const executionParameters = JSON.stringify({
       userName: username,
       password,
-      platformId,
+      platformId: stackId,
     });
 
-    const res = await loginUser({
+    console.log(`in login with new version ... stackId = ${stackId}; 
+    executionParameters = ${JSON.stringify(executionParameters, null, 2)}`);
+    const res = await updateAuth({
       variables: {
         // LOGIN ACTION
-        actionId: 'a0d89c1f-c423-45e0-9339-c719dcbb7afe',
+        actionId: LOGIN_ACTION_ID,
         executionParameters,
         unrestricted: true,
       },
-    }).catch(
-      (
-        err: ApolloError,
-      ): {
-        error: ApolloError;
-        data?: Response;
-      } => {
-        return { error: err };
-      },
-    );
+    }).catch((err: ApolloError): {
+      error: ApolloError;
+      data?: Response;
+    } => {
+      return { error: err };
+    });
 
-    if (res.error || !res.data || !res.data.ExecuteAction) {
+    if (res.error || !res.data || !res.data.execute) {
       if (res.error.networkError) {
         throw res.error.networkError;
       }
@@ -162,13 +161,14 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
         throw res.error.graphQLErrors[0];
       }
 
-      throw new Error('Unknown error.');
+      console.log(`error logging in: ${JSON.stringify(res.error, null, 2)}`);
+
+      throw new Error('Unknown error logging in.');
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.execute);
 
     if (
-      !response.id ||
       !response.userId ||
       !response.userName ||
       !response.role ||
@@ -176,7 +176,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
       !response.AuthenticationResult.AccessToken ||
       !response.AuthenticationResult.RefreshToken
     ) {
-      throw new Error('Unknown error.');
+      throw new Error('Missing data from server on login.');
     }
 
     this.setUser(
@@ -198,42 +198,72 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     return response;
   };
 
+  private async retrieveUserWithToken(): Promise<User | void> {
+    let user;
+
+    try {
+      user = await this.loginWithToken();
+    } catch (e) {
+      user = await this.retrieveUserWithRefreshToken();
+    }
+
+    return user;
+  }
+
+  private async retrieveUserWithRefreshToken(): Promise<User | void> {
+    let user;
+
+    try {
+      await this.refreshToken();
+
+      user = await this.loginWithToken();
+    } catch (e) {
+      console.log('Invalid token.');
+    }
+
+    return user;
+  }
+
   public async refreshToken(): Promise<string | void> {
-    const { loginUser: refreshAccessToken, platformId } = this.props;
+    const { updateAuth, stackId } = this.props;
 
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
       return this.logout();
     }
 
-    const executionParameters = JSON.stringify({ refreshToken, platformId });
+    const executionParameters = JSON.stringify({
+      refreshToken,
+      platformId: stackId,
+    });
 
-    const res = await refreshAccessToken({
+    console.log(`in refreshToken...; 
+    executionParameters = ${JSON.stringify(executionParameters, null, 2)}`);
+
+    const res = await updateAuth({
       variables: {
         // REFRESH TOKEN ACTION
-        actionId: '96d3be63-53c5-418e-9167-71e3d43271e3',
+        actionId: REFRESH_TOKEN_ACTION_ID,
         executionParameters,
         unrestricted: true,
       },
-    }).catch(
-      (
-        err: ApolloError,
-      ): {
-        error: ApolloError;
-        data?: Response;
-      } => {
-        return { error: err };
-      },
-    );
+    }).catch((err: ApolloError): {
+      error: ApolloError;
+      data?: Response;
+    } => {
+      return { error: err };
+    });
 
-    if (res.error || !res.data || !res.data.ExecuteAction) {
+    console.log(`in refreshToken...; 
+    res = ${JSON.stringify(res, null, 2)}`);
+
+    if (res.error || !res.data || !res.data.execute) {
       return this.logout();
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.execute);
 
     if (
-      !response.id ||
       !response.AuthenticationResult ||
       !response.AuthenticationResult.AccessToken
     ) {
@@ -248,46 +278,51 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
     return response.AuthenticationResult.AccessToken;
   }
 
+  /*
+  The sequence of auth control when opening a unit seems to be:
+    1. get the accessToken from local storage.
+    2. if there is none, logout.
+    3. otherwise, call verifyToken.
+    4. if good, set user data and we're done
+    5. if not, call refreshToken
+    6. if works, set data and we're done.
+    7. if not, logout, and user must log in again.
+   */
   public async loginWithToken(): Promise<User | void> {
-    const { loginUser, platformId } = this.props;
+    const { updateAuth, stackId } = this.props;
 
-    const accessToken = await localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('accessToken');
+
     if (!accessToken) {
       return this.logout();
     }
 
-    const executionParameters = JSON.stringify({ accessToken, platformId });
+    const executionParameters = JSON.stringify({
+      accessToken,
+      platformId: stackId,
+    });
 
-    const res = await loginUser({
+    const res = await updateAuth({
       variables: {
-        // VERIFY TOKEN ACTION
-        actionId: '1279e113-d70f-4a95-9890-a5cebd344f3d',
+        // VERIFY TOKEN/RETRIEVE USER ACTION
+        actionId: VERIFY_TOKEN_ACTION_ID,
         executionParameters,
         unrestricted: true,
       },
-    }).catch(
-      (
-        err: ApolloError,
-      ): {
-        error: ApolloError;
-        data?: Response;
-      } => {
-        return { error: err };
-      },
-    );
+    }).catch((err: ApolloError): {
+      error: ApolloError;
+      data?: Response;
+    } => {
+      return { error: err };
+    });
 
-    if (res.error || !res.data || !res.data.ExecuteAction) {
+    if (res.error || !res.data || !res.data.execute) {
       throw new Error('Expired/Invalid Token');
     }
 
-    const response = JSON.parse(res.data.ExecuteAction);
+    const response = JSON.parse(res.data.execute);
 
-    if (
-      !response.id ||
-      !response.userId ||
-      !response.role ||
-      !response.accessToken
-    ) {
+    if (!response.userId || !response.role || !response.accessToken) {
       throw new Error('Expired/Invalid Token');
     }
 
@@ -301,10 +336,10 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 
   public render(): JSX.Element {
     const { currentUser, loading } = this.state;
-    const { platformId, children, client } = this.props;
+    const { stackId, children, client } = this.props;
 
     const providerProps = {
-      platformId,
+      stackId,
       currentUser,
       client,
       loading,
@@ -317,7 +352,7 @@ class RawNoStackProvider extends Component<ProviderProps, ProviderState> {
 }
 
 export interface Response {
-  ExecuteAction: string;
+  Execute: string;
 }
 
 export interface Variables {
@@ -332,12 +367,12 @@ export const NoStackProvider: FunctionComponent<{
   children: React.ReactNode;
 }> = ({ client, platformId, children }): JSX.Element => (
   <ApolloProvider client={client}>
-    <Mutation mutation={EXECUTE_ACTION}>
+    <Mutation mutation={EXECUTE}>
       {(loginUser: MutationFunction): JSX.Element => (
         <RawNoStackProvider
           client={client}
-          platformId={platformId}
-          loginUser={loginUser}
+          stackId={platformId}
+          updateAuth={loginUser}
         >
           {children}
         </RawNoStackProvider>

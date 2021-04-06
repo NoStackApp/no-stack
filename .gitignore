@@ -72,3 +72,6 @@ stats.html
 
 # generated types
 src/generated
+
+#idea files
+.idea
