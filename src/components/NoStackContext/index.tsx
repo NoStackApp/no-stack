@@ -6,7 +6,8 @@ import React, {
 } from 'react';
 // import { graphql } from '@apollo/react-hoc';
 import { Mutation } from '@apollo/react-components';
-import { ApolloProvider, MutationFunction } from '@apollo/react-common';
+import { MutationFunction } from '@apollo/react-common';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { ApolloClient, ApolloError } from 'apollo-client';
 import { NormalizedCache } from 'apollo-cache-inmemory';
 
