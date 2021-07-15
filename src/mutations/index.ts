@@ -67,3 +67,25 @@ export const RESET_PASSWORD = gql`
     )
   }
 `;
+
+export const VERIFY_TOKEN = gql`
+  mutation VERIFY_TOKEN($token: String!, $stackId: ID!) {
+    verifyToken(token: $token, stackId: $stackId)
+  }
+`;
+
+export const REFRESH_TOKEN = gql`
+  mutation REFRESH_TOKEN($token: String!, $stackId: ID!) {
+    refreshToken(token: $token, stackId: $stackId)
+  }
+`;
+
+export const LOGIN = gql`
+  mutation LOGIN($userNameOrEmail: String!, $password: String!, $stackId: ID!) {
+    login(
+      userNameOrEmail: $userNameOrEmail
+      password: $password
+      stackId: $stackId
+    )
+  }
+`;
