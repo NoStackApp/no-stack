@@ -8,9 +8,16 @@ faker.seed(123);
 
 describe('<LoginForm />', () => {
   const loginMock = jest.fn();
+  let loginExceptionMock: any;
+  let submitButtonText: string;
+  let username: string;
+  let password: string;
 
   beforeEach(() => {
     loginMock.mockReset();
+    submitButtonText = 'Log In';
+    username = faker.random.word();
+    password = faker.random.word();
   });
 
   it('should initially not render', () => {
@@ -28,10 +35,6 @@ describe('<LoginForm />', () => {
   });
 
   it('should render login form if not signed in', () => {
-    const submitButtonText = faker.random.word();
-    const username = faker.random.word();
-    const password = faker.random.word();
-
     const { getByLabelText, getByText } = render(
       <LoginForm login={loginMock} submitButtonText={submitButtonText} />,
     );
@@ -58,6 +61,31 @@ describe('<LoginForm />', () => {
     expect(loginMock).toHaveBeenCalledWith({
       username,
       password,
+    });
+  });
+
+  describe('AND login fails', () => {
+    beforeEach(() => {
+      loginExceptionMock = jest.fn(() => {
+        throw new Error('error');
+      });
+    });
+    it('SHOULD set the error state', () => {
+      const {
+        getByRole,
+        container: { firstChild },
+      } = render(
+        <LoginForm
+          submitButtonText={submitButtonText}
+          login={loginExceptionMock}
+        />,
+      );
+
+      expect(firstChild).toMatchSnapshot();
+
+      const form = getByRole('form');
+      fireEvent.submit(form);
+      expect(loginExceptionMock).toHaveBeenCalled();
     });
   });
 });

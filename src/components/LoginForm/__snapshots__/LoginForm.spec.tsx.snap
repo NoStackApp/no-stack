@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<LoginForm /> AND login fails SHOULD set the error state 1`] = `
+<div
+  class="sc-bdVaJa ezJIro"
+>
+  <form>
+    <div
+      class="sc-bwzfXH hWAxya"
+    >
+      <label
+        for="nostack-username"
+      >
+        Username:
+        <input
+          id="nostack-username"
+          name="username"
+          type="text"
+          value=""
+        />
+      </label>
+    </div>
+    <div
+      class="sc-bwzfXH hWAxya"
+    >
+      <label
+        for="nostack-password"
+      >
+        Password:
+        <input
+          id="nostack-password"
+          name="password"
+          type="password"
+          value=""
+        />
+      </label>
+    </div>
+    <div
+      class="sc-bwzfXH hWAxya"
+    >
+      <button
+        disabled=""
+        type="submit"
+      >
+        Log In
+      </button>
+    </div>
+    
+  </form>
+</div>
+`;
