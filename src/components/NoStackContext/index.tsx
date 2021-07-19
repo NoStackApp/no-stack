@@ -54,6 +54,7 @@ export const NoStackConsumer: FunctionComponent<{
 }> = ({ children }): JSX.Element => (
   <Consumer>
     {(context): React.ReactNode => {
+      console.log({ context });
       if (context === undefined) {
         throw new Error(
           'NoStackConsumer must be used within a NoStackProvider.',
