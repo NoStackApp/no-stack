@@ -1,8 +1,12 @@
-export const validStackId = 'us-east-1_kYI8RNIb1';
+import { config } from 'dotenv';
 
-export const validUserNameOrEmail = 'Me';
+config();
 
-export const validPassword = 'OpenUp1!';
+export const validStackId = process.env.STACK_ID;
+
+export const validUserNameOrEmail = process.env.USERNAME;
+
+export const validPassword = process.env.PASSWORD;
 
 export const successLogin = {
   userNameOrEmail: validUserNameOrEmail,
@@ -29,6 +33,6 @@ export const successCreateUser = {
 
 export const executeParams = {
   actionId: 'a0d89c1f-c423-45e0-9339-c719dcbb7afe',
-  executionParameters: `{"userName":${validUserNameOrEmail},"password":"${validPassword}","platformId":"${validStackId}"}`,
+  executionParameters: `{"userName":"${validUserNameOrEmail}","password":"${validPassword}","platformId":"${validStackId}"}`,
   unrestricted: true,
 };

@@ -1,7 +1,14 @@
 export const mockedResponse = {
   EXECUTE: {
-    success: {},
-    error: {},
+    success: {
+      data: {
+        execute:
+          '{"ChallengeParameters":{},"AuthenticationResult":{"AccessToken":"sampleaccesstoken"}}',
+      },
+    },
+    error: {
+      message: 'Error: Error: UserNotFoundException: User does not exist.',
+    },
   },
   REGISTER_USER: {
     success: {
@@ -19,8 +26,15 @@ export const mockedResponse = {
     },
   },
   RESEND_CONFIRMATION: {
-    success: {},
-    error: {},
+    success: {
+      data: {
+        resendConfirmation: '{"message":"Success!"}',
+      },
+    },
+    error: {
+      message:
+        'Error: UserNotFoundException: Username/client id combination not found.',
+    },
   },
   FORGOT_PASSWORD: {
     success: {
@@ -29,7 +43,9 @@ export const mockedResponse = {
           '{"CodeDeliveryDetails":{"Destination":"r***@g***.com","DeliveryMedium":"EMAIL","AttributeName":"email"}}',
       },
     },
-    error: {},
+    error: {
+      message: '',
+    },
   },
   RESET_PASSWORD: {
     success: {
@@ -37,10 +53,17 @@ export const mockedResponse = {
         resetForgottenPassword: '{"message":"Success!"}',
       },
     },
-    error: {},
+    error: {
+      message:
+        'ExpiredCodeException: Invalid code provided, please request a code again.',
+    },
   },
   VERIFY_TOKEN: {
-    success: {},
+    success: {
+      data: {
+        verifyToken: '{"message":"Success!"}',
+      },
+    },
     error: {
       message: 'Error: Error: NotAuthorizedException: Invalid Access Token',
     },
@@ -52,7 +75,10 @@ export const mockedResponse = {
           '{"ChallengeParameters":{},"AuthenticationResult":{"AccessToken',
       },
     },
-    error: {},
+    error: {
+      message:
+        'AuthenticationError: NotAuthorizedException: Invalid Refresh Token',
+    },
   },
   LOGIN: {
     success: {
@@ -61,6 +87,8 @@ export const mockedResponse = {
           '{"ChallengeParameters":{},"AuthenticationResult":{"AccessToken":"sub1.sub2.sub3","ExpiresIn":3600,"TokenType":"Bearer","RefreshToken":"","userId":"","userName":"","role":"USER"}}',
       },
     },
-    error: {},
+    error: {
+      message: 'Error: NotAuthorizedException: Incorrect username or password.',
+    },
   },
 };

@@ -1,6 +1,5 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { createMockClient } from 'mock-apollo-client';
-import { ApolloError, Error } from '@apollo/react-components';
 import {
   EXECUTE,
   FORGOT_PASSWORD,
@@ -18,13 +17,17 @@ import {
   successLogin,
   validStackId,
   successCreateUser,
+  executeParams,
 } from './data/mocked-inputs';
+
+require('dotenv').config();
 
 global.fetch = require('node-fetch');
 
 let client;
+let mockedHandler;
 jest.setTimeout(10000);
-const runWithMock = true;
+const runWithMock = process.env.RUN_MOCK;
 
 const loginFunction = async () => {
   if (runWithMock) {
@@ -42,14 +45,6 @@ const loginFunction = async () => {
   return JSON.parse(login);
 };
 
-const getAccessToken = async () => {
-  const {
-    AuthenticationResult: { AccessToken },
-  } = await loginFunction();
-
-  return AccessToken;
-};
-
 function setClient(mutationName, keyName, mutationString, inputHandler) {
   if (runWithMock) {
     const data = mockedResponse[mutationName][keyName];
@@ -58,24 +53,30 @@ function setClient(mutationName, keyName, mutationString, inputHandler) {
     client = createMockClient();
 
     client.setRequestHandler(mutationString, handler);
-    // client.setRequestHandler(mutationString, handler);
   } else {
+    mockedHandler = jest.fn();
+
     client = new ApolloClient({
       uri: 'https://api.nostack.net/graphql',
       cache: new InMemoryCache(),
     });
+
+    mockedHandler();
   }
 }
 
 const getErrorHandler = message => {
-  return () =>
+  mockedHandler = jest.fn(() =>
     Promise.resolve({
       errors: [
         {
           message,
         },
       ],
-    });
+    }),
+  );
+
+  return mockedHandler;
 };
 
 describe('GIVEN mutations', () => {
@@ -101,9 +102,7 @@ describe('GIVEN mutations', () => {
           'LOGIN',
           'failure',
           LOGIN,
-          getErrorHandler(
-            'Error: NotAuthorizedException: Incorrect username or password.',
-          ),
+          getErrorHandler(mockedResponse.LOGIN.error.message),
         );
       });
       it('SHOULD throw error with error message', async () => {
@@ -112,12 +111,13 @@ describe('GIVEN mutations', () => {
             mutation: LOGIN,
             variables: failedLogin,
           }),
-        ).rejects.toThrow([
-          'Error: NotAuthorizedException: Incorrect username or password.',
-        ]);
+        ).rejects.toThrow(mockedResponse.LOGIN.error.message);
+
+        expect(mockedHandler).toHaveBeenCalled();
       });
     });
   });
+
   describe('Given REFRESH_TOKEN mutation', () => {
     describe('AND Given valid token', () => {
       beforeEach(() => {
@@ -144,8 +144,7 @@ describe('GIVEN mutations', () => {
           Promise.resolve({
             errors: [
               {
-                message:
-                  'AuthenticationError: NotAuthorizedException: Invalid Refresh Token',
+                message: mockedResponse.REFRESH_TOKEN.error.message,
               },
             ],
           }),
@@ -160,12 +159,13 @@ describe('GIVEN mutations', () => {
               stackId: validStackId,
             },
           }),
-        ).rejects.toThrow(
-          'AuthenticationError: NotAuthorizedException: Invalid Refresh Token',
-        );
+        ).rejects.toThrow(mockedResponse.REFRESH_TOKEN.error.message);
+
+        expect(mockedHandler).toHaveBeenCalled();
       });
     });
   });
+
   describe('GIVEN REGISTER mutation', () => {
     describe('AND GIVEN correct inputs', () => {
       beforeEach(() => {
@@ -207,6 +207,7 @@ describe('GIVEN mutations', () => {
       });
     });
   });
+
   describe('GIVEN VERIFY_TOKEN mutation', () => {
     describe('AND Given a valid token', () => {
       beforeEach(() => {
@@ -249,10 +250,13 @@ describe('GIVEN mutations', () => {
               stackId: validStackId,
             },
           }),
-        ).rejects.toThrow('');
+        ).rejects.toThrow(mockedResponse.VERIFY_TOKEN.error.message);
+
+        expect(mockedHandler).toHaveBeenCalled();
       });
     });
   });
+
   describe('GIVEN FORGOT_PASSWORD mutation', () => {
     describe('AND Given valid input', () => {
       beforeEach(() => {
@@ -274,24 +278,30 @@ describe('GIVEN mutations', () => {
     });
     describe('AND Given invalid input', () => {
       beforeEach(() => {
-        setClient('FORGOT_PASSWORD', 'failure', FORGOT_PASSWORD);
+        setClient(
+          'FORGOT_PASSWORD',
+          'failure',
+          FORGOT_PASSWORD,
+          getErrorHandler(mockedResponse.FORGOT_PASSWORD.error.message),
+        );
       });
       it('SHOULD return an exception', async () => {
         const { stackId } = successLogin;
-        try {
-          const result = await client.mutate({
+        await expect(
+          client.mutate({
             mutation: FORGOT_PASSWORD,
             variables: {
               userNameOrEmail: 'somerandom',
               stackId,
             },
-          });
-        } catch (error) {
-          expect(error).toBeInstanceOf(ApolloError);
-        }
+          }),
+        ).rejects.toThrow(mockedResponse.FORGOT_PASSWORD.error.message);
+
+        expect(mockedHandler).toHaveBeenCalled();
       });
     });
   });
+
   describe('GIVEN RESET_PASSWORD mutation', () => {
     describe('AND Given valid input', () => {
       beforeEach(() => {
@@ -318,8 +328,8 @@ describe('GIVEN mutations', () => {
         setClient(
           'RESET_PASSWORD',
           'failure',
-          FORGOT_PASSWORD,
-          getErrorHandler('dsf'),
+          RESET_PASSWORD,
+          getErrorHandler(mockedResponse.RESET_PASSWORD.error.message),
         );
       });
       it('SHOULD return error', async () => {
@@ -336,78 +346,93 @@ describe('GIVEN mutations', () => {
               stackId,
             },
           }),
-        ).rejects.toThrow(['sadsad']);
+        ).rejects.toThrow(mockedResponse.RESET_PASSWORD.error.message);
+
+        expect(mockedHandler).toHaveBeenCalledTimes(1);
       });
     });
   });
-  // describe('GIVEN RESEND_CONFIRMATION mutation', () => {
-  //   describe('AND Given valid input', () => {
-  //     beforeEach(() => {
-  //       setClient('RESEND_CONFIRMATION', 'success', RESEND_CONFIRMATION);
-  //     });
-  //     it('SHOULD return valid response', async () => {
-  //       const { userNameOrEmail, stackId } = successLogin;
-  //       const result = await client.mutate({
-  //         mutation: RESEND_CONFIRMATION,
-  //         variables: {
-  //           userNameOrEmail,
-  //           stackId,
-  //         },
-  //       });
-  //       expect(result.data.forgotPassword).toHaveProperty(
-  //         'CodeDeliveryDetials',
-  //       );
-  //     });
-  //   });
-  //   describe('AND Given invalid input', () => {
-  //     beforeEach(() => {
-  //       setClient('RESEND_CONFIRMATION', 'failure', RESEND_CONFIRMATION);
-  //     });
-  //     it('SHOULD throw error', async () => {
-  //       try {
-  //         const { userNameOrEmail, stackId } = successLogin;
-  //         const result = await client.mutate({
-  //           mutation: RESEND_CONFIRMATION,
-  //           variables: {
-  //             userNameOrEmail: 'testing',
-  //             stackId,
-  //           },
-  //         });
-  //       } catch (error) {
-  //         expect(error).toBeInstanceOf(ApolloError);
-  //       }
-  //     });
-  //   });
-  // });
-  // describe('GIVEN EXECUTE mutation', () => {
-  //   describe('AND Given valid input', () => {
-  //     beforeEach(() => {
-  //       setClient('EXECUTE', 'success', EXECUTE);
-  //     });
-  //     it('SHOULD return valid response', async () => {
-  //       const result = await client.mutate({
-  //         mutation: EXECUTE,
-  //         variables: executeParams,
-  //       });
-  //       expect(result.data.forgotPassword).toHaveProperty(
-  //         'CodeDeliveryDetials',
-  //       );
-  //     });
-  //   });
-  //   describe('AND Given invalid input', () => {
-  //     beforeEach(() => {
-  //       setClient('EXECUTE', 'success', EXECUTE);
-  //     });
-  //     it('SHOULD throw error', async () => {
-  //       try {
-  //         const result = await client.mutate({
-  //           mutation: EXECUTE,
-  //           variables: executeParams,
-  //         });
-  //       } catch (error) {
-  //         expect(error).toBeInstanceOf(ApolloError);
-  //       }
-  //     });
-  //   });
-  // });
+
+  describe('GIVEN RESEND_CONFIRMATION mutation', () => {
+    describe('AND Given valid input', () => {
+      beforeEach(() => {
+        setClient('RESEND_CONFIRMATION', 'success', RESEND_CONFIRMATION);
+      });
+      it('SHOULD return valid response', async () => {
+        const { userNameOrEmail, stackId } = successLogin;
+        const result = await client.mutate({
+          mutation: RESEND_CONFIRMATION,
+          variables: {
+            userNameOrEmail,
+            stackId,
+          },
+        });
+        expect(result.data.resendConfirmation.includes('Success')).toBe(true);
+      });
+    });
+    describe('AND Given invalid input', () => {
+      beforeEach(() => {
+        setClient(
+          'RESEND_CONFIRMATION',
+          'failure',
+          RESEND_CONFIRMATION,
+          // getErrorHandler(mockedResponse.RESEND_CONFIRMATION.error.message),
+          getErrorHandler(mockedResponse.RESEND_CONFIRMATION.error.message),
+          mockedHandler,
+        );
+      });
+      it('SHOULD throw error', async () => {
+        const { stackId } = successLogin;
+        await expect(
+          client.mutate({
+            mutation: RESEND_CONFIRMATION,
+            variables: {
+              userNameOrEmail: 'testing',
+              stackId,
+            },
+          }),
+        ).rejects.toThrow(mockedResponse.RESEND_CONFIRMATION.error.message);
+        expect(mockedHandler).toHaveBeenCalled();
+      });
+    });
+  });
+  describe('GIVEN EXECUTE mutation', () => {
+    describe('AND Given valid input', () => {
+      beforeEach(() => {
+        setClient('EXECUTE', 'success', EXECUTE);
+      });
+      it('SHOULD return valid response', async () => {
+        const result = await client.mutate({
+          mutation: EXECUTE,
+          variables: executeParams,
+        });
+
+        expect(result.data).toHaveProperty('execute');
+      });
+    });
+    describe('AND Given invalid input', () => {
+      beforeEach(() => {
+        setClient(
+          'EXECUTE',
+          'success',
+          EXECUTE,
+          getErrorHandler(mockedResponse.EXECUTE.error.message),
+        );
+      });
+
+      it('SHOULD throw error', async () => {
+        await expect(
+          client.mutate({
+            mutation: EXECUTE,
+            variables: {
+              ...executeParams,
+              executeParameters: `{"userName":"You","password":"SamplePassword","platformId":${validStackId}}`,
+            },
+          }),
+        ).rejects.toThrow(mockedResponse.EXECUTE.error.message);
+
+        expect(mockedHandler).toHaveBeenCalled();
+      });
+    });
+  });
 });
