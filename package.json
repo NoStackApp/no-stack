@@ -1,6 +1,6 @@
 {
   "name": "@nostack/no-stack",
-  "version": "0.0.50",
+  "version": "0.1.0",
   "description": "Set of React utilities and helpers for NoStack",
   "main": "dist/no-stack.cjs.js",
   "module": "dist/no-stack.esm.js",
