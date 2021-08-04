@@ -1,0 +1,6 @@
+- create an integration test
+- test all mutations by setting up Test cases for each mutations
+- console.log all the responses from server
+- setup the mock server.
+
+- contact brut & get the sample response. ask for the right params to call.
